@@ -1,4 +1,4 @@
-# compiladores1-G5
+# **Compiladores1-G5**
 
 ## **Pontos de Controle (P1 e P2):**  
    - **P1:** A equipe apresenta:
