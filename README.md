@@ -26,6 +26,15 @@ Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build
 
 Ex.: `feat(api): adiciona rota de login`.
 
+## Branches
+
+Formato:
+```
+<type>/<short summary> <-author name>
+```
+Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+
+Ex.: `feat/adiciona rota de login -Enzo Gabriel`.
 
 ## Contribuição
 
