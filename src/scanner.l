@@ -8,6 +8,17 @@
 
 if          { printf("KW_IF\n"); }
 while       { printf("KW_WHILE\n"); }
+_Thread_local {printf("THREAD_STORAGE\n"); }
+alignas     {printf("KW_ALIGNMENT\n"); }
+alignof     {printf("KW_OPERATOR\n"); }
+auto        {printf("TYPE_INFERENCE\n"); }
+bool        {printf("TYPE\n"); }
+break       {printf("DECLARATION\n"); }
+case        {printf("KW_SWITCH\n"); }
+char        {printf("TYPE\n"); }
+const       {printf("TYPE\n"); }
+constexpr   {printf("SPECIFIER\n"); }
+continue    {printf("STATEMENT"); }
 
 "//".*     { /* Ignorar comentários de linha */ }
 
