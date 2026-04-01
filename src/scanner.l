@@ -9,6 +9,18 @@
 if          { printf("KW_IF\n"); }
 while       { printf("KW_WHILE\n"); }
 
+struct      { printf("KW_DECLARATION_OF_A_COMPOUND_TYPE\n");}
+switch      { printf("KW_SWITCH_STATEMENT\n");}
+thread_local{ printf("KW_THREAD_STORAGE_CLASS_SPECIFIER\n");}
+true        { printf("KW_BOOLEAN_CONSTANT_STATE\n");}
+typedef     { printf("KW_DECLARATION\n");}
+typeof      { printf("KW_OPERATOR\n");}
+typeof_unqual{ printf("KW_OPERATOR_THAT_REMOVES_QUALIFIERS\n");}
+union       { printf("KW_DECLARATION_OF_A_UNION_TYPE\n");}
+unsigned    { principal("KW_TYPE_MODIFIER\n");}
+void        { principal("KW_TYPE_OF_VARIABLE_OR_PARAMETER_OF_FUNCTION_OR_RETURN_VALUE\n");}
+volatile    { printf("KW_TYPE_QUALIFIER\n");}
+
 "//".*     { /* Ignorar comentários de linha */ }
 
 "/*"([^*]|\*+[^*/])*\*+\/    { /* Ignorar comentários de bloco */ }
