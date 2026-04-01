@@ -6,7 +6,20 @@
 /* Definições de padrões de token e ações */
 %%
 
-if          { printf("KW_IF\n"); }
+inline     { printf("INLINE FUNCTION SPECIFIER\n"); }
+int    { printf("TYPE\n"); }
+long     { printf("TYPE MODIFIER\n"); }
+nullptr     { printf("POINTER CONSTANT\n"); }
+register     { printf("AUTOMATIC DURATION STORAGE-CLASS SPECIFIER\n"); }
+restrict     { printf("TYPE QUALIFIER\n"); }
+return     { printf("STATEMENT\n"); }
+short     { printf("TYPE MODIFIER\n"); }
+signed     { printf("TYPE MODIFIER\n"); }
+sizeof     { printf("OPERATOR\n"); }
+static     { printf("STATIC ARRAY INDICES\n"); }
+static_assert     { printf("STATIC ASSERT DECLARATION\n"); }
+
+if     ""     { printf("KW_IF\n"); }
 while       { printf("KW_WHILE\n"); }
 
 "//".*     { /* Ignorar comentários de linha */ }
