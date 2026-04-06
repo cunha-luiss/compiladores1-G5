@@ -16,7 +16,7 @@ return     { printf("STATEMENT\n"); }
 short     { printf("TYPE MODIFIER\n"); }
 signed     { printf("TYPE MODIFIER\n"); }
 sizeof     { printf("OPERATOR\n"); }
-static     { printf("STATIC ARRAY INDICES\n"); }
+static     { printf("STORAGE CLASS SPECIFIER\n"); }
 static_assert     { printf("STATIC ASSERT DECLARATION\n"); }
 
 if     ""     { printf("KW_IF\n"); }
