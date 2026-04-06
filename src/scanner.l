@@ -21,6 +21,18 @@ static_assert     { printf("STATIC ASSERT DECLARATION\n"); }
 
 if     ""     { printf("KW_IF\n"); }
 while       { printf("KW_WHILE\n"); }
+default     { printf("SWITCH_STATEMENT\n"); }
+do          { printf("LOOP\n"); }
+double      { printf("TYPE\n"); }
+else        { printf("STATEMENT\n"); }
+enum        { printf("ENUMERATION_TYPE\n"); }
+extern      { printf("STORAGE_CLASS_SPECIFIER\n"); }
+false       { printf("BOOLEAN\n"); }
+float       { printf("TYPE\n"); }
+for         { printf("LOOP\n"); }
+fortran     { printf("TYPE_SPECIFIER\n"); }
+goto        { printf("STATEMENT\n"); }
+if          { printf("STATEMENT\n"); }
 
 "//".*     { /* Ignorar comentários de linha */ }
 
