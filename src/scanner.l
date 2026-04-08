@@ -6,21 +6,9 @@
 /* Definições de padrões de token e ações */
 %%
 
-inline     { printf("INLINE FUNCTION SPECIFIER\n"); }
-int    { printf("TYPE\n"); }
-long     { printf("TYPE MODIFIER\n"); }
-nullptr     { printf("POINTER CONSTANT\n"); }
-register     { printf("AUTOMATIC DURATION STORAGE-CLASS SPECIFIER\n"); }
-restrict     { printf("TYPE QUALIFIER\n"); }
-return     { printf("STATEMENT\n"); }
-short     { printf("TYPE MODIFIER\n"); }
-signed     { printf("TYPE MODIFIER\n"); }
-sizeof     { printf("OPERATOR\n"); }
-static     { printf("STORAGE CLASS SPECIFIER\n"); }
-static_assert     { printf("STATIC ASSERT DECLARATION\n"); }
-
-if     ""     { printf("KW_IF\n"); }
+if          { printf("KW_IF\n"); }
 while       { printf("KW_WHILE\n"); }
+
 _Alignas    { printf("KW_ALIGNAS\n"); }
 _Alignof    { printf("KW_ALIGNOF\n"); }
 _Atomic     { printf("KW_ATOMIC\n"); }
@@ -33,6 +21,18 @@ _Generic    { printf("KW_GENERIC\n"); }
 _Imaginary  { printf("KW_IMAGINARY\n"); }
 _Noreturn   { printf("KW_NORETURN\n"); }
 _Static_assert  { printf("KW_STATIC_ASSERT\n"); }
+
+_Thread_local {printf("THREAD_STORAGE\n"); }
+alignas     {printf("KW_ALIGNMENT\n"); }
+alignof     {printf("KW_OPERATOR\n"); }
+auto        {printf("TYPE_INFERENCE\n"); }
+bool        {printf("TYPE\n"); }
+break       {printf("DECLARATION\n"); }
+case        {printf("KW_SWITCH\n"); }
+char        {printf("TYPE\n"); }
+const       {printf("TYPE\n"); }
+constexpr   {printf("SPECIFIER\n"); }
+continue    {printf("STATEMENT"); }
 
 default     { printf("SWITCH_STATEMENT\n"); }
 do          { printf("LOOP\n"); }
@@ -47,6 +47,19 @@ fortran     { printf("TYPE_SPECIFIER\n"); }
 goto        { printf("STATEMENT\n"); }
 if          { printf("STATEMENT\n"); }
 
+inline     { printf("INLINE FUNCTION SPECIFIER\n"); }
+int    { printf("TYPE\n"); }
+long     { printf("TYPE MODIFIER\n"); }
+nullptr     { printf("POINTER CONSTANT\n"); }
+register     { printf("AUTOMATIC DURATION STORAGE-CLASS SPECIFIER\n"); }
+restrict     { printf("TYPE QUALIFIER\n"); }
+return     { printf("STATEMENT\n"); }
+short     { printf("TYPE MODIFIER\n"); }
+signed     { printf("TYPE MODIFIER\n"); }
+sizeof     { printf("OPERATOR\n"); }
+static     { printf("STORAGE CLASS SPECIFIER\n"); }
+static_assert     { printf("STATIC ASSERT DECLARATION\n"); }
+
 struct      { printf("KW_DECLARATION_OF_A_COMPOUND_TYPE\n");}
 switch      { printf("KW_SWITCH_STATEMENT\n");}
 thread_local    { printf("KW_THREAD_STORAGE_CLASS_SPECIFIER\n");}
@@ -58,6 +71,7 @@ union       { printf("KW_DECLARATION_OF_A_UNION_TYPE\n");}
 unsigned    { printf("KW_TYPE_MODIFIER\n");}
 void        { printf("KW_TYPE_OF_VARIABLE_OR_PARAMETER_OF_FUNCTION_OR_RETURN_VALUE\n");}
 volatile    { printf("KW_TYPE_QUALIFIER\n");}
+
 
 
 "//".*     { /* Ignorar comentários de linha */ }
