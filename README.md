@@ -22,7 +22,7 @@ Formato:
 
 [body]
 ```
-Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `build`, `ci`, `add`, `revert`.
 
 Ex.: `feat(api): adiciona rota de login`.
 
