@@ -6,9 +6,6 @@
 /* Definições de padrões de token e ações */
 %%
 
-if          { printf("KW_IF\n"); }
-while       { printf("KW_WHILE\n"); }
-
 _Alignas    { printf("KW_ALIGNAS\n"); }
 _Alignof    { printf("KW_ALIGNOF\n"); }
 _Atomic     { printf("KW_ATOMIC\n"); }
@@ -71,6 +68,8 @@ union       { printf("KW_DECLARATION_OF_A_UNION_TYPE\n");}
 unsigned    { printf("KW_TYPE_MODIFIER\n");}
 void        { printf("KW_TYPE_OF_VARIABLE_OR_PARAMETER_OF_FUNCTION_OR_RETURN_VALUE\n");}
 volatile    { printf("KW_TYPE_QUALIFIER\n");}
+
+while       { printf("KW_WHILE\n"); }
 
 
 
