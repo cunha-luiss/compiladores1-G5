@@ -1,6 +1,8 @@
 %{
 /* arquivo de exemplo da "semana 03"*/
 #include <stdio.h>
+#include <stdlib.h>
+#include "parser.tab.h"  /* contém definições geradas pelo Bison (NUM, PLUS, etc.) */
 %}
 
 /* Definições de padrões de token e ações */
@@ -79,9 +81,24 @@ while       { printf("KW_WHILE\n"); }
 
 [a-zA-Z_][a-zA-Z0-9_]*  { printf("IDENT(%s)\n", yytext); }
 
-[0-9]+(\.[0-9]+)?  { printf("NUMBER(%s)\n", yytext); }
+[0-9]+(\.[0-9]+)?  { 
+    yylval.intValue = atof(yytext); // pega texto, converte em float e salva para que o analisador sintático possa usa-lo
+    return FLOAT;                   // avisa o analisador sintático que um float foi encontrado
+    }
 
-[+\-*/=]   { printf("OPERATOR(%s)\n", yytext); }
+[0-9]+  {
+    yylval.intValue = atoi(yytext); // pega texto, converte em inteiro e salva para que o analisador sintático possa usa-lo
+    return NUM;                     // avisa o analisador sintático que um inteiro foi encontrado
+}
+
+"+"     { return PLUS; }
+"-"     { return MINUS; }
+"*"     { return TIMES; }
+"/"     { return DIVIDE; }
+"("     { return LPAREN; }
+")"     { return RPAREN; }
+"=="    { return COMPARATION; }
+"="     { return EQUAL; }
 
 [ \t\n]+  { /* Não faz nada */ }
 
