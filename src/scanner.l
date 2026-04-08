@@ -79,7 +79,6 @@ while       { printf("KW_WHILE\n"); }
 
 "/*"([^*]|\*+[^*/])*\*+\/    { /* Ignorar comentários de bloco */ }
 
-// COMENTADO [a-zA-Z_][a-zA-Z0-9_]*  { printf("IDENT(%s)\n", yytext); }
 
 [0-9]+\.[0-9]+  { 
     yylval.floatValue = atof(yytext); // pega texto, converte em float e salva para que o analisador sintático possa usa-lo
