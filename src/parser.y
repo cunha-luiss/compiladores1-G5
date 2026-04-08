@@ -10,14 +10,16 @@ void yyerror(const char *s);    //usado quando há um erro
 /* Define valor semântico (intValue) */
 %union {
     int intValue;
+    float floatValue;
 }
 
 /* Token que carrega valor semântico */
 %token <intValue> NUM
+%token <floatValue> NUMFLOAT
 
 /* Tokens sem valor semântico, mas com precedência */
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
-
+%token COMPARATION EQUAL
 /* Declara precedência:
    - PLUS e MINUS têm menor precedência
    - TIMES e DIVIDE têm maior precedência */
@@ -43,6 +45,7 @@ expr:
     | expr DIVIDE expr  { $$ = $1 / $3; }
     | LPAREN expr RPAREN{ $$ = $2; }
     | NUM               { $$ = $1; }
+    | NUMFLOAT             { $$ = $1; }
     ;
 
 %%

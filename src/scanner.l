@@ -1,5 +1,5 @@
 %{
-/* arquivo de exemplo da "semana 03"*/
+/* arquivo léxico do interpretador*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.tab.h"  /* contém definições geradas pelo Bison (NUM, PLUS, etc.) */
@@ -79,11 +79,11 @@ while       { printf("KW_WHILE\n"); }
 
 "/*"([^*]|\*+[^*/])*\*+\/    { /* Ignorar comentários de bloco */ }
 
-[a-zA-Z_][a-zA-Z0-9_]*  { printf("IDENT(%s)\n", yytext); }
+// COMENTADO [a-zA-Z_][a-zA-Z0-9_]*  { printf("IDENT(%s)\n", yytext); }
 
-[0-9]+(\.[0-9]+)?  { 
-    yylval.intValue = atof(yytext); // pega texto, converte em float e salva para que o analisador sintático possa usa-lo
-    return FLOAT;                   // avisa o analisador sintático que um float foi encontrado
+[0-9]+\.[0-9]+  { 
+    yylval.floatValue = atof(yytext); // pega texto, converte em float e salva para que o analisador sintático possa usa-lo
+    return NUMFLOAT;                   // avisa o analisador sintático que um float foi encontrado
     }
 
 [0-9]+  {
@@ -111,8 +111,11 @@ int yywrap(void) {
     return 1;
 }
 
-/* Função principal: executa o analisador léxico */
+
+/* Função principal: executa o analisador léxico 
+comentado para nao rodar
 int main(void) {
     yylex();
     return 0;
 }
+*/
