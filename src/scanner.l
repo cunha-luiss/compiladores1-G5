@@ -99,6 +99,15 @@ while       { printf("KW_WHILE\n"); }
 "=="    { return COMPARATION; }
 "="     { return EQUAL; }
 
+";"     { return SEMICOLON; }
+"{"     { return LBRACE; }
+"}"     { return RBRACE; }
+"<="    { return LESS_EQUAL; }
+">="    { return GREATER_EQUAL; }
+"!="    { return NOT_EQUAL; }
+"&&"    { return LOGICAL_AND; }
+"||"    { return LOGICAL_OR; }
+
 [ \t\n]+  { /* Não faz nada */ }
 
 .  { printf("UNKNOWN(%s)\n", yytext); }
