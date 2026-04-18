@@ -2,6 +2,7 @@
 /* arquivo léxico do interpretador*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parser.tab.h"  /* contém definições geradas pelo Bison (NUM, PLUS, etc.) */
 %}
 
@@ -78,6 +79,11 @@ while       { printf("KW_WHILE\n"); }
 "//".*     { /* Ignorar comentários de linha */ }
 
 "/*"([^*]|\*+[^*/])*\*+\/    { /* Ignorar comentários de bloco */ }
+
+[a-zA-Z_][a-zA-Z0-9_]* {
+    yylval.str = strdup(yytext);
+    return ID;
+}
 
 
 [0-9]+\.[0-9]+  { 
