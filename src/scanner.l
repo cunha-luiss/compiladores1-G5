@@ -6,8 +6,28 @@
 /* Definições de padrões de token e ações */
 %%
 
-if          { printf("KW_IF\n"); }
-while       { printf("KW_WHILE\n"); }
+float       { return KW_FLOAT; }
+for         { return KW_FOR; }
+goto        { return KW_GOTO; }
+if          { return KW_IF; }
+inline      { return KW_INLINE; }
+int         { return KW_INT; }
+long        { return KW_LONG; }
+register    { return KW_REGISTER; }
+restrict    { return KW_RESTRICT; }
+return      { return KW_RETURN; }
+short       { return KW_SHORT; }
+signed      { return KW_SIGNED; }
+sizeof      { return KW_SIZEOF; }
+static      { return KW_STATIC; }
+struct      { return KW_STRUCT; }
+switch      { return KW_SWITCH; }
+typedef     { return KW_TYPEDEF; }
+union       { return KW_UNION; }
+unsigned    { return KW_UNSIGNED; }
+void        { return KW_VOID; }
+volatile    { return KW_VOLATILE; }
+while       { return KW_WHILE; }
 _Alignas    { printf("KW_ALIGNAS\n"); }
 _Alignof    { printf("KW_ALIGNOF\n"); }
 _Atomic     { printf("KW_ATOMIC\n"); }
