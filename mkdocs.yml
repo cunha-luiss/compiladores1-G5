@@ -1,0 +1,69 @@
+site_name: Projeto Interpretador G5
+site_description: Planejamento e documentacao do interpretador com Flex e Bison
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: pt-BR
+  font:
+    text: Poppins
+    code: JetBrains Mono
+  icon:
+    logo: material/book-open-page-variant
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+  palette:
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Mudar para modo claro
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Mudar para modo escuro
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Inicio: index.md
+  - Escopo da fase: escopo.md
+  - Estrutura do projeto: estrutura-do-projeto.md
+  - Decisoes tecnicas: decisoes-tecnicas.md
+  - Planejamento no Kanban: planejamento-kanban.md
+  - Quadro Kanban: kanban.md
+  - Snapshot do GitHub Project: kanban-sync.md
+  - Problemas e solucoes: problemas-e-solucoes.md
+  - Publicacao no GitHub Pages: publicacao-github-pages.md
+  - Guia do diretorio docs: readme.md
