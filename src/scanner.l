@@ -9,70 +9,67 @@
 /* Definições de padrões de token e ações */
 %%
 
-_Alignas    { printf("KW_ALIGNAS\n"); }
-_Alignof    { printf("KW_ALIGNOF\n"); }
-_Atomic     { printf("KW_ATOMIC\n"); }
-_Bool       { printf("KW_BOOL\n"); }
-_Complex    { printf("KW_COMPLEX\n"); }
-_Decimal128 { printf("KW_DECIMAL128\n"); }
-_Decimal32  { printf("KW_DECIMAL32\n"); }
-_Decimal64  { printf("KW_DECIMAL64\n"); }
-_Generic    { printf("KW_GENERIC\n"); }
-_Imaginary  { printf("KW_IMAGINARY\n"); }
-_Noreturn   { printf("KW_NORETURN\n"); }
-_Static_assert  { printf("KW_STATIC_ASSERT\n"); }
 
-_Thread_local {printf("THREAD_STORAGE\n"); }
-alignas     {printf("KW_ALIGNMENT\n"); }
-alignof     {printf("KW_OPERATOR\n"); }
-auto        {printf("TYPE_INFERENCE\n"); }
-bool        {printf("TYPE\n"); }
-break       {printf("DECLARATION\n"); }
-case        {printf("KW_SWITCH\n"); }
-char        {printf("TYPE\n"); }
-const       {printf("TYPE\n"); }
-constexpr   {printf("SPECIFIER\n"); }
-continue    {printf("STATEMENT"); }
-
-default     { printf("SWITCH_STATEMENT\n"); }
-do          { printf("LOOP\n"); }
-double      { printf("TYPE\n"); }
-else        { printf("STATEMENT\n"); }
-enum        { printf("ENUMERATION_TYPE\n"); }
-extern      { printf("STORAGE_CLASS_SPECIFIER\n"); }
-false       { printf("BOOLEAN\n"); }
-float         { return TYPE; }
+_Alignas      { return KW_ALIGNAS; }
+_Alignof      { return KW_ALIGNOF; }
+_Atomic       { return KW_ATOMIC; }
+_Bool         { return KW_BOOL; }
+_Complex      { return KW_COMPLEX; }
+_Decimal128   { return KW_DECIMAL128; }
+_Decimal32    { return KW_DECIMAL32; }
+_Decimal64    { return KW_DECIMAL64; }
+_Generic      { return KW_GENERIC; }
+_Imaginary    { return KW_IMAGINARY; }
+_Noreturn     { return KW_NORETURN; }
+_Static_assert  { return KW_STATIC_ASSERT; }
+_Thread_local { return THREAD_STORAGE; }
+alignas       { return KW_ALIGNMENT; }
+alignof       { return KW_OPERATOR; }
+auto          { return AUTO_TYPE_INFERENCE; }
+bool          { return BOOL_TYPE; }
+break         { return DECLARATION; }
+case          { return KW_SWITCH; }
+char          { return CHAR_LITERAL; }
+const         { return CONST_LITERAL; }
+constexpr     { return SPECIFIER; }
+continue      { return CONTINUE_STATEMENT; }
+default       { return DEFAULT_STATEMENT; }
+do            { return DO_LOOP; }
+double        { return DOUBLE_TYPE; }
+else          { return ELSE_STATEMENT; }
+enum          { return ENUMERATION_TYPE; }
+extern        { return STORAGE_CLASS_SPECIFIER; }
+false         { return FALSE_LITERAL; }
+float         { return NUMFLOAT; }
 for           { return LOOP; }
 fortran       { return TYPE_SPECIFIER; }
 goto          { return STATEMENT; }
 if            { return STATEMENT; }
-
 inline        { return INLINE_FUNCTION_SPECIFIER; }
-int           { return TYPE; }
+int           { return NUM; }
 long          { return TYPE_MODIFIER; }
 nullptr       { return POINTER_CONSTANT; }
 register      { return AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER; }
 restrict      { return TYPE_QUALIFIER; }
-return        { return STATEMENT; }
+return        { return RETURN_STATEMENT; }
 short         { return TYPE_MODIFIER; }
 signed        { return TYPE_MODIFIER; }
 sizeof        { return OPERATOR; }
 static        { return STORAGE_CLASS_SPECIFIER; }
 static_assert { return STATIC_ASSERT_DECLARATION; }
-
 struct        { return KW_DECLARATION_OF_A_COMPOUND_TYPE; }
-switch        { return KW_SWITCH_STATEMENT; }
+switch        { return SWITCH_STATEMENT; }
 thread_local  { return KW_THREAD_STORAGE_CLASS_SPECIFIER; }
-true          { return KW_BOOLEAN_CONSTANT_STATE; }
-typedef       { return KW_DECLARATION; }
+true          { return TRUE_LITERAL; }
+typedef       { return KW_TYPE_DECLARATION; }
 typeof        { return KW_OPERATOR; }
 typeof_unqual { return KW_OPERATOR_THAT_REMOVES_QUALIFIERS; }
 union         { return KW_DECLARATION_OF_A_UNION_TYPE; }
 unsigned      { return KW_TYPE_MODIFIER; }
 void          { return KW_TYPE_OF_VARIABLE_OR_PARAMETER_OF_FUNCTION_OR_RETURN_VALUE; }
 volatile      { return KW_TYPE_QUALIFIER; }
-
 while         { return KW_WHILE; }
+
 
 
 
