@@ -73,7 +73,17 @@ volatile    { printf("KW_TYPE_QUALIFIER\n");}
 
 while       { printf("KW_WHILE\n"); }
 
+/* Strings literals (ex: "texto", "com \" aspas")*/
+\"(\\.|[^"\\])*\" {
+    yyval.str = strdup(yytext);
+    return STRING_LITERAL;
+}
 
+/* Character literals (ex: 'A', '\n')*/
+\'(\\.|[^'\\])*\' {
+    yyval.str = strdup(yytext);
+    return CHAR_LITERAL;
+}
 
 "//".*     { /* Ignorar comentários de linha */ }
 
