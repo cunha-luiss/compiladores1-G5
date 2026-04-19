@@ -41,6 +41,6 @@ Siga o workflow abaixo para contribuir:
     ```bash
     git push origin sua-feature
     ```
-4. Abra um Pull Request (PR) da sua branch para a branch `dev` (só ir no site e colocar Base: dev <-- compare: sua-feature)
+4. Abra um Pull Request (PR) da sua branch para a branch `dev` (só ir no site e colocar Base: dev <-- compare: sua-feature).
 
 **Desenvolvido para Compiladores 1 FCTE-UnB 2026-1** 🎓
