@@ -8,38 +8,38 @@
 /* Definições de padrões de token e ações */
 %%
 
-_Alignas    { printf("KW_ALIGNAS\n"); }
-_Alignof    { printf("KW_ALIGNOF\n"); }
-_Atomic     { printf("KW_ATOMIC\n"); }
-_Bool       { printf("KW_BOOL\n"); }
-_Complex    { printf("KW_COMPLEX\n"); }
-_Decimal128 { printf("KW_DECIMAL128\n"); }
-_Decimal32  { printf("KW_DECIMAL32\n"); }
-_Decimal64  { printf("KW_DECIMAL64\n"); }
-_Generic    { printf("KW_GENERIC\n"); }
-_Imaginary  { printf("KW_IMAGINARY\n"); }
-_Noreturn   { printf("KW_NORETURN\n"); }
-_Static_assert  { printf("KW_STATIC_ASSERT\n"); }
+_Alignas    { return KW_ALIGNAS; }
+_Alignof    { return KW_ALIGNOF; }
+_Atomic     { return KW_ATOMIC; }
+_Bool       { return KW_BOOL; }
+_Complex    { return KW_COMPLEX; }
+_Decimal128 { return KW_DECIMAL128; }
+_Decimal32  { return KW_DECIMAL32; }
+_Decimal64  { return KW_DECIMAL64; }
+_Generic    { return KW_GENERIC; }
+_Imaginary  { return KW_IMAGINARY; }
+_Noreturn   { return KW_NORETURN; }
+_Static_assert  { return KW_STATIC_ASSERT; }
 
-_Thread_local {printf("THREAD_STORAGE\n"); }
-alignas     {printf("KW_ALIGNMENT\n"); }
-alignof     {printf("KW_OPERATOR\n"); }
-auto        {printf("TYPE_INFERENCE\n"); }
-bool        {printf("TYPE\n"); }
-break       {printf("DECLARATION\n"); }
-case        {printf("KW_SWITCH\n"); }
-char        {printf("TYPE\n"); }
-const       {printf("TYPE\n"); }
-constexpr   {printf("SPECIFIER\n"); }
-continue    {printf("STATEMENT"); }
+_Thread_local { return THREAD_STORAGE; }
+alignas     { return KW_ALIGNMENT; }
+alignof     { return KW_OPERATOR; }
+auto        { return TYPE_INFERENCE; }
+bool        { return TYPE; }
+break       { return DECLARATION; }
+case        { return KW_SWITCH; }
+char        { return TYPE; }
+const       { return TYPE; }
+constexpr   { return SPECIFIER; }
+continue    { return STATEMENT; }
 
-default     { printf("SWITCH_STATEMENT\n"); }
-do          { printf("LOOP\n"); }
-double      { printf("TYPE\n"); }
-else        { printf("STATEMENT\n"); }
-enum        { printf("ENUMERATION_TYPE\n"); }
-extern      { printf("STORAGE_CLASS_SPECIFIER\n"); }
-false       { printf("BOOLEAN\n"); }
+default     { return SWITCH_STATEMENT; }
+do          { return LOOP; }
+double      { return TYPE; }
+else        { return STATEMENT; }
+enum        { return ENUMERATION_TYPE; }
+extern      { return STORAGE_CLASS_SPECIFIER; }
+false       { return BOOLEAN; }
 float       { printf("TYPE\n"); }
 for         { printf("LOOP\n"); }
 fortran     { printf("TYPE_SPECIFIER\n"); }
