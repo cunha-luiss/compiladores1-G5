@@ -2,6 +2,7 @@
 /* arquivo léxico do interpretador*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parser.tab.h"  /* contém definições geradas pelo Bison (NUM, PLUS, etc.) */
 %}
 
@@ -75,12 +76,19 @@ while         { return KW_WHILE; }
 
 
 
+
 "//".*     { /* Ignorar comentários de linha */ }
 
 "/*"([^*]|\*+[^*/])*\*+\/    { /* Ignorar comentários de bloco */ }
 
 
-[0-9]+\.[0-9]+  {
+[a-zA-Z_][a-zA-Z0-9_]* {
+    yylval.str = strdup(yytext);
+    return ID;
+}
+
+
+[0-9]+\.[0-9]+  { 
     yylval.floatValue = atof(yytext); // pega texto, converte em float e salva para que o analisador sintático possa usa-lo
     return NUMFLOAT;                   // avisa o analisador sintático que um float foi encontrado
     }
@@ -89,7 +97,6 @@ while         { return KW_WHILE; }
     yylval.intValue = atoi(yytext); // pega texto, converte em inteiro e salva para que o analisador sintático possa usa-lo
     return NUM;                     // avisa o analisador sintático que um inteiro foi encontrado
 }
-
 "+"     { return PLUS; }
 "-"     { return MINUS; }
 "*"     { return TIMES; }
