@@ -41,44 +41,46 @@ else        { printf("STATEMENT\n"); }
 enum        { printf("ENUMERATION_TYPE\n"); }
 extern      { printf("STORAGE_CLASS_SPECIFIER\n"); }
 false       { printf("BOOLEAN\n"); }
-float       { printf("TYPE\n"); }
-for         { printf("LOOP\n"); }
-fortran     { printf("TYPE_SPECIFIER\n"); }
-goto        { printf("STATEMENT\n"); }
-if          { printf("STATEMENT\n"); }
+float         { return TYPE; }
+for           { return LOOP; }
+fortran       { return TYPE_SPECIFIER; }
+goto          { return STATEMENT; }
+if            { return STATEMENT; }
 
-inline     { printf("INLINE FUNCTION SPECIFIER\n"); }
-int    { printf("TYPE\n"); }
-long     { printf("TYPE MODIFIER\n"); }
-nullptr     { printf("POINTER CONSTANT\n"); }
-register     { printf("AUTOMATIC DURATION STORAGE-CLASS SPECIFIER\n"); }
-restrict     { printf("TYPE QUALIFIER\n"); }
-return     { printf("STATEMENT\n"); }
-short     { printf("TYPE MODIFIER\n"); }
-signed     { printf("TYPE MODIFIER\n"); }
-sizeof     { printf("OPERATOR\n"); }
-static     { printf("STORAGE CLASS SPECIFIER\n"); }
-static_assert     { printf("STATIC ASSERT DECLARATION\n"); }
+inline        { return INLINE_FUNCTION_SPECIFIER; }
+int           { return TYPE; }
+long          { return TYPE_MODIFIER; }
+nullptr       { return POINTER_CONSTANT; }
+register      { return AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER; }
+restrict      { return TYPE_QUALIFIER; }
+return        { return STATEMENT; }
+short         { return TYPE_MODIFIER; }
+signed        { return TYPE_MODIFIER; }
+sizeof        { return OPERATOR; }
+static        { return STORAGE_CLASS_SPECIFIER; }
+static_assert { return STATIC_ASSERT_DECLARATION; }
 
-struct      { printf("KW_DECLARATION_OF_A_COMPOUND_TYPE\n");}
-switch      { printf("KW_SWITCH_STATEMENT\n");}
-thread_local    { printf("KW_THREAD_STORAGE_CLASS_SPECIFIER\n");}
-true        { printf("KW_BOOLEAN_CONSTANT_STATE\n");}
-typedef     { printf("KW_DECLARATION\n");}
-typeof      { printf("KW_OPERATOR\n");}
-typeof_unqual   { printf("KW_OPERATOR_THAT_REMOVES_QUALIFIERS\n");}
-union       { printf("KW_DECLARATION_OF_A_UNION_TYPE\n");}
-unsigned    { printf("KW_TYPE_MODIFIER\n");}
-void        { printf("KW_TYPE_OF_VARIABLE_OR_PARAMETER_OF_FUNCTION_OR_RETURN_VALUE\n");}
-volatile    { printf("KW_TYPE_QUALIFIER\n");}
+struct        { return KW_DECLARATION_OF_A_COMPOUND_TYPE; }
+switch        { return KW_SWITCH_STATEMENT; }
+thread_local  { return KW_THREAD_STORAGE_CLASS_SPECIFIER; }
+true          { return KW_BOOLEAN_CONSTANT_STATE; }
+typedef       { return KW_DECLARATION; }
+typeof        { return KW_OPERATOR; }
+typeof_unqual { return KW_OPERATOR_THAT_REMOVES_QUALIFIERS; }
+union         { return KW_DECLARATION_OF_A_UNION_TYPE; }
+unsigned      { return KW_TYPE_MODIFIER; }
+void          { return KW_TYPE_OF_VARIABLE_OR_PARAMETER_OF_FUNCTION_OR_RETURN_VALUE; }
+volatile      { return KW_TYPE_QUALIFIER; }
 
-while       { printf("KW_WHILE\n"); }
+while         { return KW_WHILE; }
+
 
 
 
 "//".*     { /* Ignorar comentários de linha */ }
 
 "/*"([^*]|\*+[^*/])*\*+\/    { /* Ignorar comentários de bloco */ }
+
 
 [a-zA-Z_][a-zA-Z0-9_]* {
     yylval.str = strdup(yytext);
@@ -95,7 +97,6 @@ while       { printf("KW_WHILE\n"); }
     yylval.intValue = atoi(yytext); // pega texto, converte em inteiro e salva para que o analisador sintático possa usa-lo
     return NUM;                     // avisa o analisador sintático que um inteiro foi encontrado
 }
-
 "+"     { return PLUS; }
 "-"     { return MINUS; }
 "*"     { return TIMES; }
