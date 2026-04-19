@@ -49,6 +49,8 @@ expr:
     | NUM               { $$ = $1; }
     | NUMFLOAT          { $$ = $1; }
     | ID                {free($1); $$ = 0;}
+    
+    /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
     | STRING_LITERAL    {
         printf("String processada: %s\n", $1);
         $$ = 0;
