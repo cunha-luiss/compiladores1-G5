@@ -18,6 +18,9 @@ void yyerror(const char *s);    //usado quando há um erro
 %token <intValue> NUM
 %token <floatValue> NUMFLOAT
 %token <str> ID
+%token <str> STRING_LITERAL
+%token <str> CHAR_LITERAL
+
 
 /* Tokens sem valor semântico, mas com precedência */
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
@@ -35,21 +38,32 @@ void yyerror(const char *s);    //usado quando há um erro
 %%
 
 expr:
-      expr PLUS expr    { $$ = $1 + $3; }
-      
       /*
         $$ = resultado 
         $1 = valor da primeira expr
         $3 = valor da segunda expr ($2 é representado pelo +)
       */
 
+      expr PLUS expr    { $$ = $1 + $3; }
     | expr MINUS expr   { $$ = $1 - $3; }
     | expr TIMES expr   { $$ = $1 * $3; }
     | expr DIVIDE expr  { $$ = $1 / $3; }
     | LPAREN expr RPAREN{ $$ = $2; }
     | NUM               { $$ = $1; }
-    | NUMFLOAT          { $$ = $1; }
-    | ID                { free($1); $$ = 0; }
+    | ID                {free($1); $$ = 0;}
+    
+    /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
+    | STRING_LITERAL    {
+        printf("String processada: %s\n", $1);
+        $$ = 0;
+        free($1);
+    }
+    | CHAR_LITERAL      {
+        printf("Char processado: %s\n", $1);
+        $$ = $1[1];
+        free($1);
+    }
+
     ;
 
 %%

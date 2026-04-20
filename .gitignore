@@ -1,5 +1,6 @@
 lex.yy.c
 a.out
+.github/
 .github/prompts
 !.github/workflows/
 !.github/workflows/docs.yml
