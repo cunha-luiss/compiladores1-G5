@@ -11,6 +11,7 @@ void yyerror(const char *s);    //usado quando há um erro
 %union {
     int intValue;
     float floatValue;
+    char *str;
 }
 
 /* Token que carrega valor semântico */
@@ -20,9 +21,11 @@ void yyerror(const char *s);    //usado quando há um erro
 %token <str> STRING_LITERAL
 %token <str> CHAR_LITERAL
 
+
 /* Tokens sem valor semântico, mas com precedência */
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
 %token COMPARATION EQUAL
+%token SEMICOLON LBRACE RBRACE LESS_EQUAL GREATER_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR
 /* Declara precedência:
    - PLUS e MINUS têm menor precedência
    - TIMES e DIVIDE têm maior precedência */
@@ -47,7 +50,6 @@ expr:
     | expr DIVIDE expr  { $$ = $1 / $3; }
     | LPAREN expr RPAREN{ $$ = $2; }
     | NUM               { $$ = $1; }
-    | NUMFLOAT          { $$ = $1; }
     | ID                {free($1); $$ = 0;}
     
     /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
@@ -61,6 +63,7 @@ expr:
         $$ = $1[1];
         free($1);
     }
+
     ;
 
 %%
