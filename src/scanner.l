@@ -21,10 +21,10 @@ _Decimal64    { return KW_DECIMAL64; }
 _Generic      { return KW_GENERIC; }
 _Imaginary    { return KW_IMAGINARY; }
 _Noreturn     { return KW_NORETURN; }
-_Static_assert  { return KW_STATIC_ASSERT; }
+_Static_assert { return KW_STATIC_ASSERT; }
 _Thread_local { return THREAD_STORAGE; }
 alignas       { return KW_ALIGNMENT; }
-alignof       { return KW_OPERATOR; }
+alignof       { return KW_ALIGNOF; }
 auto          { return AUTO_TYPE_INFERENCE; }
 bool          { return BOOL_TYPE; }
 break         { return DECLARATION; }
@@ -44,18 +44,18 @@ float         { return NUMFLOAT; }
 for           { return LOOP; }
 fortran       { return TYPE_SPECIFIER; }
 goto          { return STATEMENT; }
-if            { return STATEMENT; }
+if            { return IF_STATEMENT; }
 inline        { return INLINE_FUNCTION_SPECIFIER; }
 int           { return NUM; }
-long          { return TYPE_MODIFIER; }
+long          { return KW_LONG; }
 nullptr       { return POINTER_CONSTANT; }
 register      { return AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER; }
 restrict      { return TYPE_QUALIFIER; }
 return        { return RETURN_STATEMENT; }
 short         { return TYPE_MODIFIER; }
-signed        { return TYPE_MODIFIER; }
+signed        { return KW_SIZE; }
 sizeof        { return OPERATOR; }
-static        { return STORAGE_CLASS_SPECIFIER; }
+static        { return KW_STATIC; }
 static_assert { return STATIC_ASSERT_DECLARATION; }
 struct        { return KW_DECLARATION_OF_A_COMPOUND_TYPE; }
 switch        { return SWITCH_STATEMENT; }
@@ -72,15 +72,15 @@ while         { return KW_WHILE; }
 
 
 
-/* Strings literals (ex: "texto", "com \" aspas")*/
+
 \"(\\.|[^"\\])*\" {
-    yyval.str = strdup(yytext);
+    yylval.str = strdup(yytext);
     return STRING_LITERAL;
 }
 
-/* Character literals (ex: 'A', '\n')*/
+
 \'(\\.|[^'\\])*\' {
-    yyval.str = strdup(yytext);
+    yylval.str = strdup(yytext);
     return CHAR_LITERAL;
 }
 
