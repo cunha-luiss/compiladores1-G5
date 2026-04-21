@@ -2,16 +2,22 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "ast.h"
+
 /* Declarações para evitar avisos de função implícita */
 int yylex(void);                //usado para pedir próximo token
 void yyerror(const char *s);    //usado quando há um erro
+
+/* Raiz da AST */
+ASTNode *root = NULL;
 %}
 
-/* Define valor semântico (intValue) */
+/* Define valor semântico */
 %union {
     int intValue;
     float floatValue;
     char *str;
+    ASTNode *node;
 }
 
 /* Token que carrega valor semântico */
@@ -53,16 +59,33 @@ void yyerror(const char *s);    //usado quando há um erro
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
 %token COMPARATION EQUAL
 %token SEMICOLON LBRACE RBRACE LESS_EQUAL GREATER_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR
+
 /* Declara precedência:
    - PLUS e MINUS têm menor precedência
    - TIMES e DIVIDE têm maior precedência */
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-/* Associa o não terminal expr ao tipo intValue */
-%type <intValue> expr
+/* Não-terminais que carregam nó da AST */
+%type <node> program stmt expr
+%start program
 
 %%
+
+program
+    : stmt
+        {
+            root = $1;
+            $$ = $1;
+        }
+    ;
+
+stmt
+    : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
+        { $$ = new_if($3, $5, $7); }
+    | expr SEMICOLON
+        { $$ = $1; }
+    ;
 
 expr:
       /*
