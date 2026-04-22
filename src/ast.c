@@ -34,7 +34,7 @@ ASTNode *new_num(double val) {
 ASTNode *new_var(char *name) {
     ASTNode *n = alloc_node();
     n->type = NODE_VAR;
-    n->var_name = strdup(name);
+    n->var_name = name; 
     return n;
 }
 
@@ -59,7 +59,7 @@ ASTNode *new_if(ASTNode *cond, ASTNode *then, ASTNode *els) {
 ASTNode *new_assign(char *name, ASTNode *val) {
     ASTNode *n = alloc_node();
     n->type = NODE_ASSIGN;
-    n->assign.name = strdup(name);
+    n->assign.name = name; 
     n->assign.value = val;
     return n;
 }
@@ -136,7 +136,7 @@ void free_ast(ASTNode *node) {
             break;
 
         case NODE_VAR:
-            free(node->var_name);
+            
             break;
 
         case NODE_BINOP:
@@ -151,7 +151,7 @@ void free_ast(ASTNode *node) {
             break;
 
         case NODE_ASSIGN:
-            free(node->assign.name);
+            
             free_ast(node->assign.value);
             break;
     }
