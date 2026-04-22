@@ -2,16 +2,28 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "ast.h"
+
 /* Declarações para evitar avisos de função implícita */
 int yylex(void);                //usado para pedir próximo token
 void yyerror(const char *s);    //usado quando há um erro
+
+/* Raiz da AST */
+ASTNode *root = NULL;
 %}
 
-/* Define valor semântico (intValue) */
+/* Garante que parser.tab.h conheça ASTNode antes de YYSTYPE. */
+%code requires {
+    typedef struct ASTNode ASTNode;
+}
+
+/* Define valor semântico */
 %union {
     int intValue;
     float floatValue;
     char *str;
+    ASTNode *node;
 }
 
 /* Token que carrega valor semântico */
@@ -53,16 +65,33 @@ void yyerror(const char *s);    //usado quando há um erro
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
 %token COMPARATION EQUAL
 %token SEMICOLON LBRACE RBRACE LESS_EQUAL GREATER_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR
+
 /* Declara precedência:
    - PLUS e MINUS têm menor precedência
    - TIMES e DIVIDE têm maior precedência */
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-/* Associa o não terminal expr ao tipo intValue */
-%type <intValue> expr
+/* Não-terminais que carregam nó da AST */
+%type <node> program stmt expr
+%start program
 
 %%
+
+program
+    : stmt
+        {
+            root = $1;
+            $$ = $1;
+        }
+    ;
+
+stmt
+    : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
+        { $$ = new_if($3, $5, $7); }
+    | expr SEMICOLON
+        { $$ = $1; }
+    ;
 
 expr:
       /*
@@ -70,26 +99,24 @@ expr:
         $1 = valor da primeira expr
         $3 = valor da segunda expr ($2 é representado pelo +)
       */
-
-      expr PLUS expr    { $$ = $1 + $3; }
-    | expr MINUS expr   { $$ = $1 - $3; }
-    | expr TIMES expr   { $$ = $1 * $3; }
-    | expr DIVIDE expr  { $$ = $1 / $3; }
-    | LPAREN expr RPAREN{ $$ = $2; }
-    | NUM               { $$ = $1; }
-    | ID                {free($1); $$ = 0;}
-    
-    /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
-    | STRING_LITERAL    {
-        printf("String processada: %s\n", $1);
-        $$ = 0;
-        free($1);
-    }
-    | CHAR_LITERAL      {
-        printf("Char processado: %s\n", $1);
-        $$ = $1[1];
-        free($1);
-    }
+            expr PLUS expr     { $$ = new_binary("+", $1, $3); }
+        | expr MINUS expr    { $$ = new_binary("-", $1, $3); }
+        | expr TIMES expr    { $$ = new_binary("*", $1, $3); }
+        | expr DIVIDE expr   { $$ = new_binary("/", $1, $3); }
+        | LPAREN expr RPAREN { $$ = $2; }
+        | NUM                { $$ = new_int_literal($1); }
+        | NUMFLOAT           { $$ = new_float_literal($1); }
+        | ID                 { $$ = new_identifier($1); free($1); }
+        | STRING_LITERAL {
+            printf("String processada: %s\n", $1);
+            $$ = new_string_literal($1);
+            free($1);
+        }
+        | CHAR_LITERAL {
+            printf("Char processado: %s\n", $1);
+            $$ = new_char_literal($1);
+            free($1);
+        }
 
     ;
 
