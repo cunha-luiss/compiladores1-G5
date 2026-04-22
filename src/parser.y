@@ -5,7 +5,14 @@
 /* Declarações para evitar avisos de função implícita */
 int yylex(void);                //usado para pedir próximo token
 void yyerror(const char *s);    //usado quando há um erro
+extern int yylineno;
+extern char *yytext;
+extern int lexical_errors;
+
+static int syntax_errors = 0;
 %}
+
+%define parse.error verbose
 
 /* Define valor semântico (intValue) */
 %union {
@@ -96,9 +103,18 @@ expr:
 %%
 
 int main(void) {
-    return yyparse();
+    int parse_result = yyparse();
+
+    if (lexical_errors > 0 || syntax_errors > 0) {
+        fprintf(stderr, "Finalizado com %d erro(s) lexico(s) e %d erro(s) sintatico(s).\n",
+                lexical_errors, syntax_errors);
+    }
+
+    return parse_result;
 }
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro sintático: %s\n", s);
+    syntax_errors++;
+    fprintf(stderr, "Erro sintatico na linha %d: %s (proximo token: '%s')\n",
+            yylineno, s, (yytext && yytext[0] != '\0') ? yytext : "EOF");
 }
