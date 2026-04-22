@@ -2,15 +2,32 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
+#include <string.h>
+
+/* Forward declaration local para permitir uso de ponteiros para ASTNode. */
+typedef struct ASTNode ASTNode;
 
 /* Declarações para evitar avisos de função implícita */
 int yylex(void);                //usado para pedir próximo token
 void yyerror(const char *s);    //usado quando há um erro
 
+/* Construtores esperados em ast.h/ast.c (implementação futura). */
+ASTNode *new_if(ASTNode *cond, ASTNode *then_branch, ASTNode *else_branch);
+ASTNode *new_binary(const char *op, ASTNode *left, ASTNode *right);
+ASTNode *new_int_literal(int value);
+ASTNode *new_float_literal(float value);
+ASTNode *new_identifier(const char *name);
+ASTNode *new_string_literal(const char *value);
+ASTNode *new_char_literal(const char *value);
+
 /* Raiz da AST */
 ASTNode *root = NULL;
 %}
+
+/* Garante que parser.tab.h conheça ASTNode antes de YYSTYPE. */
+%code requires {
+    typedef struct ASTNode ASTNode;
+}
 
 /* Define valor semântico */
 %union {
@@ -93,26 +110,24 @@ expr:
         $1 = valor da primeira expr
         $3 = valor da segunda expr ($2 é representado pelo +)
       */
-
-      expr PLUS expr    { $$ = $1 + $3; }
-    | expr MINUS expr   { $$ = $1 - $3; }
-    | expr TIMES expr   { $$ = $1 * $3; }
-    | expr DIVIDE expr  { $$ = $1 / $3; }
-    | LPAREN expr RPAREN{ $$ = $2; }
-    | NUM               { $$ = $1; }
-    | ID                {free($1); $$ = 0;}
-    
-    /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
-    | STRING_LITERAL    {
-        printf("String processada: %s\n", $1);
-        $$ = 0;
-        free($1);
-    }
-    | CHAR_LITERAL      {
-        printf("Char processado: %s\n", $1);
-        $$ = $1[1];
-        free($1);
-    }
+            expr PLUS expr     { $$ = new_binary("+", $1, $3); }
+        | expr MINUS expr    { $$ = new_binary("-", $1, $3); }
+        | expr TIMES expr    { $$ = new_binary("*", $1, $3); }
+        | expr DIVIDE expr   { $$ = new_binary("/", $1, $3); }
+        | LPAREN expr RPAREN { $$ = $2; }
+        | NUM                { $$ = new_int_literal($1); }
+        | NUMFLOAT           { $$ = new_float_literal($1); }
+        | ID                 { $$ = new_identifier($1); free($1); }
+        | STRING_LITERAL {
+            printf("String processada: %s\n", $1);
+            $$ = new_string_literal($1);
+            free($1);
+        }
+        | CHAR_LITERAL {
+            printf("Char processado: %s\n", $1);
+            $$ = new_char_literal($1);
+            free($1);
+        }
 
     ;
 
