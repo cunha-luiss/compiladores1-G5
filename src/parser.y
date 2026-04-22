@@ -3,22 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* Forward declaration local para permitir uso de ponteiros para ASTNode. */
-typedef struct ASTNode ASTNode;
+#include "ast.h"
 
 /* Declarações para evitar avisos de função implícita */
 int yylex(void);                //usado para pedir próximo token
 void yyerror(const char *s);    //usado quando há um erro
-
-/* Construtores esperados em ast.h/ast.c (implementação futura). */
-ASTNode *new_if(ASTNode *cond, ASTNode *then_branch, ASTNode *else_branch);
-ASTNode *new_binary(const char *op, ASTNode *left, ASTNode *right);
-ASTNode *new_int_literal(int value);
-ASTNode *new_float_literal(float value);
-ASTNode *new_identifier(const char *name);
-ASTNode *new_string_literal(const char *value);
-ASTNode *new_char_literal(const char *value);
 
 /* Raiz da AST */
 ASTNode *root = NULL;
