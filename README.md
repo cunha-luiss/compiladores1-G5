@@ -7,7 +7,7 @@ O nosso projeto será de um interpretador de C, tanto para praticarmos mais aind
    - **P1:** A equipe apresenta:
      - Definição do projeto
      - Linguagem de programação escolhida
-     - Planejamento das sprints
+  - Planejamento no método Kanban
      - O que foi implementado
    - **P2:** Avaliação do progresso, incluindo:
      - Funcionalidades principais desenvolvidas
@@ -54,5 +54,27 @@ Siga o workflow abaixo para contribuir:
     git push origin tipo/SuaFeature-SeuNome
     ```
 4. Abra um Pull Request (PR) da sua branch para a branch `dev` (só ir no site e colocar Base: dev <-- compare: sua-feature).
+
+## Documentação (MkDocs Material)
+
+O site de documentação usa MkDocs com tema Material.
+
+### Rodar localmente
+
+```bash
+python -m pip install -r requirements-docs.txt
+mkdocs serve
+```
+
+### Validar build
+
+```bash
+mkdocs build --strict
+```
+
+### Publicar no GitHub Pages
+
+O deploy é automático pelo workflow `.github/workflows/docs.yml`.
+No GitHub, configure `Settings -> Pages -> Source: GitHub Actions`.
 
 **Desenvolvido para Compiladores 1 FCTE-UnB 2026-1** 🎓

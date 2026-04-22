@@ -1,2 +1,10 @@
 lex.yy.c
 a.out
+.github/
+.github/prompts
+!.github/workflows/
+!.github/workflows/docs.yml
+!.github/workflows/sync-kanban-docs.yml
+!.github/scripts/
+!.github/scripts/sync_project_to_docs.py
+site/
