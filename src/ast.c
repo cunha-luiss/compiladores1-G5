@@ -158,3 +158,17 @@ void free_ast(ASTNode *node) {
 
     free(node);
 }
+
+ASTNode *new_string_literal(char *str) {
+    ASTNode *n = alloc_node();
+    n->type = NODE_STRING;
+    n->str_val = str;
+    return n;
+}
+
+ASTNode *new_char_literal(char *ch) {
+    ASTNode *n = alloc_node();
+    n->type = NODE_CHAR;
+    n->str_val = ch; // Ou criar uma variável específica na union
+    return n;
+}

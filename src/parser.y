@@ -99,14 +99,14 @@ expr:
         $1 = valor da primeira expr
         $3 = valor da segunda expr ($2 é representado pelo +)
       */
-            expr PLUS expr     { $$ = new_binary("+", $1, $3); }
-        | expr MINUS expr    { $$ = new_binary("-", $1, $3); }
-        | expr TIMES expr    { $$ = new_binary("*", $1, $3); }
-        | expr DIVIDE expr   { $$ = new_binary("/", $1, $3); }
+            expr PLUS expr     { $$ = new_binop('+', $1, $3); }
+        | expr MINUS expr    { $$ = new_binop('-', $1, $3); }
+        | expr TIMES expr    { $$ = new_binop('*', $1, $3); }
+        | expr DIVIDE expr   { $$ = new_binop('/', $1, $3); }
         | LPAREN expr RPAREN { $$ = $2; }
-        | NUM                { $$ = new_int_literal($1); }
-        | NUMFLOAT           { $$ = new_float_literal($1); }
-        | ID                 { $$ = new_identifier($1); free($1); }
+        | NUM                { $$ = new_num($1); }
+        | NUMFLOAT           { $$ = new_num($1); }
+        | ID                 { $$ = new_var($1); free($1); }
         | STRING_LITERAL {
             printf("String processada: %s\n", $1);
             $$ = new_string_literal($1);
@@ -123,7 +123,24 @@ expr:
 %%
 
 int main(void) {
-    return yyparse();
+    // yyparse retorna 0 se a análise foi bem sucedida
+    if (yyparse() == 0) {
+        printf("Análise sintática concluída com sucesso!\n\n");
+        printf("--- Árvore Sintática Abstrata (AST) ---\n");
+        
+        // Se a raiz foi preenchida, imprime a árvore começando do nível 0 de indentação
+        if (root != NULL) {
+            print_ast(root, 0);
+            
+            // Depois de usar a árvore, libere a memória para evitar memory leak
+            free_ast(root); 
+        } else {
+            printf("A árvore está vazia.\n");
+        }
+    } else {
+        printf("Falha na análise sintática.\n");
+    }
+    return 0;
 }
 
 void yyerror(const char *s) {

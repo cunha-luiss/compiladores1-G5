@@ -7,6 +7,8 @@ typedef enum {
     NODE_BINOP,
     NODE_IF,
     NODE_ASSIGN,
+    NODE_STRING,
+    NODE_CHAR
 } NodeType;
 
 typedef struct ASTNode {
@@ -14,6 +16,7 @@ typedef struct ASTNode {
     union {
         double num_val;         // número
         char  *var_name;        // variável
+        char  *str_val;         // string
 
         struct {                // operação binária
             char op;
@@ -40,6 +43,8 @@ ASTNode *new_var(char *name);
 ASTNode *new_binop(char op, ASTNode *l, ASTNode *r);
 ASTNode *new_if(ASTNode *cond, ASTNode *then, ASTNode *els);
 ASTNode *new_assign(char *name, ASTNode *val);
+ASTNode *new_string_literal(char *str);
+ASTNode *new_char_literal(char *ch);
 
 // utilidades
 void print_ast(ASTNode *node, int indent);
