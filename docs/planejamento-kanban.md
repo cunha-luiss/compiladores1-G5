@@ -5,28 +5,20 @@ Este plano organiza o trabalho em fluxo contínuo, usando apenas Kanban e sem di
 ## Modelo de trabalho
 
 - Método principal: Kanban.
-- Fluxo: puxado por prioridade do backlog.
+- Fluxo: orientado por prioridade do backlog.
 - Objetivo: manter entrega contínua e previsível.
 
 ## Cadência de acompanhamento
 
 - Daily curta: quartas-feiras para remover bloqueios.
 - Review semanal do quadro: validar progresso e repriorizar tarefas.
-- Revisão mensal de escopo: confirmar aderência ao que foi combinado.
+- Revisão mensal de escopo: confirmar aderência ao que foi combinado orientado para a entrega atual.
 
-## Frentes de trabalho no backlog
-
-1. Definição da linguagem interpretada.
-2. Análise léxica com Flex.
-3. Análise sintática com Bison.
-4. Base para geração da AST.
-5. Documentação e publicação do site.
 
 ## Políticas do Kanban
 
 - Limite de WIP em `In Progress` para evitar multitarefa excessiva.
 - Todo card deve ter responsável, prioridade e critério de pronto.
-- Card bloqueado deve registrar impedimento e ação de desbloqueio.
 - Atualizações de documentação acompanham a conclusão dos cards.
 
 ## Critérios de pronto (Definition of Done)

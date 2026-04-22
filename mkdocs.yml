@@ -62,8 +62,6 @@ nav:
   - Estrutura do projeto: estrutura-do-projeto.md
   - Decisoes tecnicas: decisoes-tecnicas.md
   - Planejamento no Kanban: planejamento-kanban.md
-  - Quadro Kanban: kanban.md
-  - Snapshot do GitHub Project: kanban-sync.md
+  - Quadro Kanban: https://github.com/users/cunha-luiss/projects/2
   - Problemas e solucoes: problemas-e-solucoes.md
-  - Publicacao no GitHub Pages: publicacao-github-pages.md
   - Guia do diretorio docs: readme.md

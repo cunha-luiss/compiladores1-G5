@@ -16,10 +16,8 @@ Este diretório contém a documentação oficial do plano de implementação do 
 - Estrutura do projeto: [estrutura-do-projeto.md](./estrutura-do-projeto.md)
 - Decisões técnicas: [decisoes-tecnicas.md](./decisoes-tecnicas.md)
 - Planejamento no Kanban: [planejamento-kanban.md](./planejamento-kanban.md)
-- Quadro Kanban: [kanban.md](./kanban.md)
-- Snapshot do GitHub Project: [kanban-sync.md](./kanban-sync.md)
+- Quadro Kanban: [kanban](https://github.com/users/cunha-luiss/projects/2)
 - Problemas e soluções: [problemas-e-solucoes.md](./problemas-e-solucoes.md)
-- Publicação no GitHub Pages: [publicacao-github-pages.md](./publicacao-github-pages.md)
 
 ## Stack da documentação
 
@@ -27,12 +25,6 @@ Este diretório contém a documentação oficial do plano de implementação do 
 - Tema: Material for MkDocs
 - Configuração principal: `mkdocs.yml` na raiz do repositório
 - Dependências de docs: `requirements-docs.txt`
-
-## Modo escuro
-
-- O site inicia em modo escuro por padrão.
-- O botão de alternância de tema fica no cabeçalho (sol/lua).
-- Toda validação visual deve ser feita em modo escuro e claro antes do merge.
 
 ## Política de atualização
 

@@ -2,17 +2,15 @@
 
 Este site reúne o plano oficial de implementação do interpretador da disciplina, com foco na fase atual do projeto.
 
-Este conteúdo é gerado com MkDocs Material e publicado no GitHub Pages.
-
 <div class="hero-panel" markdown>
 
-## Objetivo da fase atual
+## Objetivo da fase atual (P1)
 
 Construir e documentar a base do interpretador com três pilares:
 
 1. Definir a linguagem interpretada (sintaxe e semântica básica).
 2. Implementar a análise léxica com Flex.
-3. Construir o analisador sintático com Bison e preparar a base da AST.
+3. Construir a base do analisador sintático com Bison e preparar árvore de derivação sintática.
 
 </div>
 
@@ -44,17 +42,12 @@ Construir e documentar a base do interpretador com três pilares:
 
 	Processo contínuo de execução, revisão e priorização das tarefas.
 
-- [Quadro Kanban](./kanban.md)
+- [Quadro Kanban](https://github.com/users/cunha-luiss/projects/2)
 
 	---
 
 	Colunas, políticas de WIP, critérios de pronto e backlog inicial.
 
-- [Snapshot do GitHub Project](./kanban-sync.md)
-
-	---
-
-	Visao sincronizada automaticamente dos itens do quadro oficial.
 
 - [Problemas e soluções](./problemas-e-solucoes.md)
 
@@ -62,27 +55,13 @@ Construir e documentar a base do interpretador com três pilares:
 
 	Registro vivo de riscos, bloqueios e ações adotadas.
 
-- [Como publicar no GitHub Pages](./publicacao-github-pages.md)
-
-	---
-
-	Passo a passo de build, deploy e validações finais do site.
 
 </div>
 
 ## Operação do projeto
 
-!!! tip "Rotina recomendada"
-		Toda semana: revisar prioridades no Kanban, puxar tarefas por capacidade real, atualizar documentação e registrar bloqueios.
-
-## Entregáveis exigidos pelo professor
-
-A documentação cobre os quatro itens obrigatórios:
-
-- Estrutura do projeto
-- Decisões técnicas
-- Planejamento no Kanban
-- Problemas encontrados e soluções adotadas
+!!! tip "Rotina adotada"
+		Toda semana: revisar prioridades no Kanban executando tarefas por capacidade real, atualizar documentação e registrar bloqueios.
 
 ## Diretriz de atualização
 

@@ -30,15 +30,15 @@ Motivo:
 - priorizar qualidade e testes sobre quantidade de funcionalidades;
 - facilitar depuração em ambiente acadêmico.
 
-## 4. AST como base do interpretador
+## 4. Uso do tipo String
 
-Decisão: estruturar ações semânticas no parser para construção progressiva da AST.
+Decisão: implementar o tratamento de strings mesmo que não seja um tipo padrão da linguagem C
 
 Motivo:
 
-- simplifica etapas futuras de análise semântica e interpretação;
-- evita retrabalho ao sair de parser puramente avaliativo;
-- melhora a organização interna do projeto.
+- facilitar o tratamento de literais de texto
+- dispensa a necessidade do tratamento de ponteiros e arrays
+- contorna o tratamento de texto como array de char
 
 ## 5. Documentação como artefato de engenharia
 
@@ -49,12 +49,3 @@ Motivo:
 - aumenta visibilidade do progresso do time;
 - facilita review técnico e alinhamento com o professor;
 - reduz risco de inconsistência entre implementação e planejamento.
-
-## 6. Ferramental no Windows
-
-Decisão: considerar WinFlexBison no ambiente Windows quando Flex/Bison não estiverem disponíveis nativamente.
-
-Motivo:
-
-- reduzir bloqueios de setup local;
-- padronizar instruções de execução para o grupo.
