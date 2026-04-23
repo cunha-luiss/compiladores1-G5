@@ -51,6 +51,7 @@ void yyerror(const char *s);    //usado quando há um erro
 
 /* Tokens sem valor semântico, mas com precedência */
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
+%token NEWLINE
 %token COMPARATION EQUAL
 %token SEMICOLON LBRACE RBRACE LESS_EQUAL GREATER_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR
 /* Declara precedência:
@@ -64,6 +65,12 @@ void yyerror(const char *s);    //usado quando há um erro
 
 %%
 
+input:
+            /* vazio */
+        | input NEWLINE
+        | input expr NEWLINE { printf("Resultado final: %d\n", $2); }
+        ;
+
 expr:
       /*
         $$ = resultado 
@@ -71,13 +78,40 @@ expr:
         $3 = valor da segunda expr ($2 é representado pelo +)
       */
 
-      expr PLUS expr    { $$ = $1 + $3; }
-    | expr MINUS expr   { $$ = $1 - $3; }
-    | expr TIMES expr   { $$ = $1 * $3; }
-    | expr DIVIDE expr  { $$ = $1 / $3; }
-    | LPAREN expr RPAREN{ $$ = $2; }
-    | NUM               { $$ = $1; }
-    | ID                {free($1); $$ = 0;}
+      expr PLUS expr    {
+        $$ = $1 + $3;
+        printf("Expr processada: %d + %d = %d\n", $1, $3, $$);
+    }
+    | expr MINUS expr   {
+        $$ = $1 - $3;
+        printf("Expr processada: %d - %d = %d\n", $1, $3, $$);
+    }
+    | expr TIMES expr   {
+        $$ = $1 * $3;
+        printf("Expr processada: %d * %d = %d\n", $1, $3, $$);
+    }
+    | expr DIVIDE expr  {
+        if ($3 == 0) {
+            printf("Erro: divisao por zero em %d / %d\n", $1, $3);
+            $$ = 0;
+        } else {
+            $$ = $1 / $3;
+            printf("Expr processada: %d / %d = %d\n", $1, $3, $$);
+        }
+    }
+    | LPAREN expr RPAREN{
+        $$ = $2;
+        printf("Expr processada: (%d) = %d\n", $2, $$);
+    }
+    | NUM               {
+        $$ = $1;
+        printf("Numero processado: %d\n", $$);
+    }
+    | ID                {
+        printf("Identificador processado: %s (valor temporario = 0)\n", $1);
+        free($1);
+        $$ = 0;
+    }
     
     /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
     | STRING_LITERAL    {

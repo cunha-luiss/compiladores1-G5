@@ -122,7 +122,8 @@ while         { return KW_WHILE; }
 "&&"    { return LOGICAL_AND; }
 "||"    { return LOGICAL_OR; }
 
-[ \t\n]+  { /* Não faz nada */ }
+"\n"    { return NEWLINE; }
+[ \t\r]+  { /* Não faz nada */ }
 
 .  { printf("UNKNOWN(%s)\n", yytext); }
 
