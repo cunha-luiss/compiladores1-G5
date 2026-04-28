@@ -4,7 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.tab.h"  /* contém definições geradas pelo Bison (NUM, PLUS, etc.) */
+
+int lexical_errors = 0;
 %}
+
+%option yylineno noinput nounput
 
 /* Definições de padrões de token e ações */
 %%
@@ -125,7 +129,10 @@ while         { return KW_WHILE; }
 "\n"    { return NEWLINE; }
 [ \t\r]+  { /* Não faz nada */ }
 
-.  { printf("UNKNOWN(%s)\n", yytext); }
+.  {
+    lexical_errors++;
+    fprintf(stderr, "Erro lexico na linha %d: token invalido '%s'\n", yylineno, yytext);
+}
 
 %%
 
