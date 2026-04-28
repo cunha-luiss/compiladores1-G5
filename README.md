@@ -1,5 +1,8 @@
 # **Compiladores1-G5**
 
+## O que faremos?
+O nosso projeto será de um interpretador de C, tanto para praticarmos mais ainda nossos conhecimentos em C, tanto para entender mais ainda sobre interpretadores que estão em todo lugar
+
 ## **Pontos de Controle (P1 e P2):**  
    - **P1:** A equipe apresenta:
      - Definição do projeto
