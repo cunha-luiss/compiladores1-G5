@@ -2,7 +2,16 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-/* Declarações para evitar avisos de função implícita */
+#include <string.h>
+#include "ast.h"
+
+/* Declarações para evitar avisos de função implícita 
+
+Rodar com:
+
+gcc -o parser parser.tab.c lex.yy.c ast.c -lfl
+
+*/
 int yylex(void);                //usado para pedir próximo token
 void yyerror(const char *s);    //usado quando há um erro
 extern int yylineno;
@@ -10,15 +19,24 @@ extern char *yytext;
 extern int lexical_errors;
 
 static int syntax_errors = 0;
+
+/* Raiz da AST */
+ASTNode *root = NULL;
 %}
 
 %define parse.error verbose
+
+/* Garante que parser.tab.h conheça ASTNode antes de YYSTYPE. */
+%code requires {
+    typedef struct ASTNode ASTNode;
+}
 
 /* Define valor semântico (intValue) */
 %union {
     int intValue;
     float floatValue;
     char *str;
+    ASTNode *node;
 }
 
 /* Token que carrega valor semântico */
@@ -70,13 +88,27 @@ static int syntax_errors = 0;
 /* Associa o não terminal expr ao tipo intValue */
 %type <intValue> expr
 
+/* Não-terminais que carregam nó da AST */
+%type <node> program stmt
+%start program
+
+
 %%
 
-input:
-            /* vazio */
-        | input NEWLINE
-        | input expr NEWLINE { printf("Resultado final: %d\n", $2); }
-        ;
+program
+    : stmt
+        {
+            root = $1;
+            $$ = $1;
+        }
+    ;
+
+stmt
+    : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
+        { $$ = new_if((ASTNode*)(long)$3, $5, $7); }
+    | expr SEMICOLON
+        { $$ = (ASTNode*)(long)$1; /* O ideal aqui eh criar um no para a expressao; usando cast para evitar warning de tipagem */ }
+    ;
 
 expr:
       /*
@@ -137,7 +169,24 @@ expr:
 %%
 
 int main(void) {
+    // yyparse retorna 0 se a análise foi bem sucedida
     int parse_result = yyparse();
+    if (parse_result == 0) {
+        printf("Análise sintática concluída com sucesso!\n\n");
+        printf("--- Árvore Sintática Abstrata (AST) ---\n");
+        
+        // Se a raiz foi preenchida, imprime a árvore começando do nível 0 de indentação
+        if (root != NULL) {
+            print_ast(root, 0);
+            
+            // Depois de usar a árvore, libere a memória para evitar memory leak
+            free_ast(root); 
+        } else {
+            printf("A árvore está vazia.\n");
+        }
+    } else {
+        printf("Falha na análise sintática.\n");
+    }
 
     if (lexical_errors > 0 || syntax_errors > 0) {
         fprintf(stderr, "Finalizado com %d erro(s) lexico(s) e %d erro(s) sintatico(s).\n",
