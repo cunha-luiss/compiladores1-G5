@@ -71,10 +71,12 @@ ASTNode *root = NULL;
 %token NEWLINE
 %token COMPARATION EQUAL
 %token SEMICOLON LBRACE RBRACE LESS_EQUAL GREATER_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR
+%token LESS GREATER
 
 /* Precedência */
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left LESS GREATER
 
 /* Tipos dos não-terminais */
 %type <node> expr
@@ -159,6 +161,16 @@ expr
         {
             $$ = new_binop('/', $1, $3);
             printf("Expr DIVIDE processada\n");
+        }
+
+    | expr LESS expr
+        {
+            $$ = new_binop('<', $1, $3);
+        }
+
+    | expr GREATER expr
+        {
+            $$ = new_binop('>', $1, $3);
         }
 
     | LPAREN expr RPAREN

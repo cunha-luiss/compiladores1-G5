@@ -136,7 +136,9 @@ extern int yydebug;
     GREATER_EQUAL = 331,           /* GREATER_EQUAL  */
     NOT_EQUAL = 332,               /* NOT_EQUAL  */
     LOGICAL_AND = 333,             /* LOGICAL_AND  */
-    LOGICAL_OR = 334               /* LOGICAL_OR  */
+    LOGICAL_OR = 334,              /* LOGICAL_OR  */
+    LESS = 335,                    /* LESS  */
+    GREATER = 336                  /* GREATER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -152,7 +154,7 @@ union YYSTYPE
     char *str;
     ASTNode *node;
 
-#line 156 "parser.tab.h"
+#line 158 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

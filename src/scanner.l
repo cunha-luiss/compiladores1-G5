@@ -125,6 +125,8 @@ while         { return KW_WHILE; }
 "!="    { return NOT_EQUAL; }
 "&&"    { return LOGICAL_AND; }
 "||"    { return LOGICAL_OR; }
+"<"     { return LESS; }
+">"     { return GREATER; }
 
 "\n"    ;
 [ \t\r]+  { /* Não faz nada */ }
