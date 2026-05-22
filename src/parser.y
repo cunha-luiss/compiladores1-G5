@@ -106,6 +106,13 @@ program
 stmt
     : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
         { $$ = new_if((ASTNode*)(long)$3, $5, $7); }
+
+    | IF_STATEMENT LPAREN expr RPAREN stmt
+        { $$ = new_if((ASTNode*)(long)$3, $5, NULL); }
+
+    | KW_WHILE LPAREN expr RPAREN stmt
+        { $$ = new_while((ASTNode*)(long)$3, $5); }
+        
     | expr SEMICOLON
         { $$ = (ASTNode*)(long)$1; /* O ideal aqui eh criar um no para a expressao; usando cast para evitar warning de tipagem */ }
     ;
