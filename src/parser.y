@@ -105,11 +105,13 @@ program
 
 stmt_list
     : stmt
-        { $$ = $1; }
+        {
+            $$ = new_block($1, NULL);
+        }
 
     | stmt_list stmt
         {
-            $$ = $2;
+            $$ = new_block($2, $1);
         }
     ;
 
