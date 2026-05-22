@@ -5,10 +5,16 @@
 #include <string.h>
 #include "ast.h"
 
-/* Declarações para evitar avisos de função implícita */
+/* Declarações para evitar avisos de função implícita 
 
-int yylex(void);
-void yyerror(const char *s);
+Rodar com:
+
+gcc -o parser parser.tab.c lex.yy.c ast.c -lfl
+
+*/
+
+int yylex(void);                  //usado para pedir próximo token
+void yyerror(const char *s);      //usado quando há um erro
 
 extern int yylineno;
 extern char *yytext;
@@ -22,10 +28,12 @@ ASTNode *root = NULL;
 
 %define parse.error verbose
 
+/* Garante que parser.tab.h conheça ASTNode antes de YYSTYPE. */
 %code requires {
     typedef struct ASTNode ASTNode;
 }
 
+/* Define valor semântico (intValue) */
 %union {
     int intValue;
     float floatValue;
@@ -51,22 +59,22 @@ ASTNode *root = NULL;
 %token SWITCH_STATEMENT KW_SWITCH DEFAULT_STATEMENT
 %token CONTINUE_STATEMENT DECLARATION STATEMENT RETURN_STATEMENT
 
-/* Modificadores */
+/* Modificadores de Acesso, Classes de Armazenamento e Qualificadores */
 %token KW_STATIC STORAGE_CLASS_SPECIFIER AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER
 %token INLINE_FUNCTION_SPECIFIER TYPE_QUALIFIER KW_TYPE_QUALIFIER CONST_LITERAL SPECIFIER
 %token THREAD_STORAGE KW_THREAD_STORAGE_CLASS_SPECIFIER AUTO_TYPE_INFERENCE
 
-/* Outros */
+/* Alinhamento, Asserções e Atômicos */
 %token KW_ALIGNAS KW_ALIGNOF KW_ALIGNMENT
 %token KW_ATOMIC
 %token KW_STATIC_ASSERT STATIC_ASSERT_DECLARATION
 %token KW_GENERIC KW_NORETURN
 
-/* Literais */
+/* Literais Reservados e Operadores Especiais */
 %token TRUE_LITERAL FALSE_LITERAL POINTER_CONSTANT
 %token OPERATOR KW_OPERATOR KW_OPERATOR_THAT_REMOVES_QUALIFIERS
 
-/* Operadores */
+/* Tokens sem valor semântico, mas com precedência */
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
 %token NEWLINE
 %token COMPARATION EQUAL
@@ -209,30 +217,24 @@ expr
 int main(void) {
 
     int parse_result = yyparse();
-
     if (parse_result == 0) {
-
         printf("Análise sintática concluída com sucesso!\n\n");
         printf("--- Árvore Sintática Abstrata (AST) ---\n");
 
         if (root != NULL) {
-
             print_ast(root, 0);
 
             free_ast(root);
 
         } else {
-
             printf("A árvore está vazia.\n");
         }
 
     } else {
-
         printf("Falha na análise sintática.\n");
     }
 
     if (lexical_errors > 0 || syntax_errors > 0) {
-
         fprintf(stderr,
                 "Finalizado com %d erro(s) lexico(s) e %d erro(s) sintatico(s).\n",
                 lexical_errors,
@@ -243,12 +245,8 @@ int main(void) {
 }
 
 void yyerror(const char *s) {
-
     syntax_errors++;
-
     fprintf(stderr,
             "Erro sintatico na linha %d: %s (proximo token: '%s')\n",
-            yylineno,
-            s,
-            (yytext && yytext[0] != '\0') ? yytext : "EOF");
+            yylineno,s, (yytext && yytext[0] != '\0') ? yytext : "EOF");
 }
