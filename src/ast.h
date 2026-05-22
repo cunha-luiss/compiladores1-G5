@@ -6,6 +6,7 @@ typedef enum {
     NODE_VAR,
     NODE_BINOP,
     NODE_IF,
+    NODE_WHILE,
     NODE_ASSIGN,
     NODE_STRING,
     NODE_CHAR
@@ -30,6 +31,11 @@ typedef struct ASTNode {
             struct ASTNode *else_branch;
         } if_node;
 
+        struct {                // while
+            struct ASTNode *cond;
+            struct ASTNode *body;
+        } while_node;
+
         struct {                // atribuição
             char *name;
             struct ASTNode *value;
@@ -42,6 +48,7 @@ ASTNode *new_num(double val);
 ASTNode *new_var(char *name);
 ASTNode *new_binop(char op, ASTNode *l, ASTNode *r);
 ASTNode *new_if(ASTNode *cond, ASTNode *then, ASTNode *els);
+ASTNode *new_while(ASTNode *cond, ASTNode *body);
 ASTNode *new_assign(char *name, ASTNode *val);
 ASTNode *new_string_literal(char *str);
 ASTNode *new_char_literal(char *ch);
