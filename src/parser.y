@@ -89,7 +89,7 @@ ASTNode *root = NULL;
 %type <intValue> expr
 
 /* Não-terminais que carregam nó da AST */
-%type <node> program stmt
+%type <node> program stmt stmt_list
 %start program
 
 
@@ -103,6 +103,16 @@ program
         }
     ;
 
+stmt_list
+    : stmt
+        { $$ = $1; }
+
+    | stmt_list stmt
+        {
+            $$ = $2;
+        }
+    ;
+
 stmt
     : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
         { $$ = new_if((ASTNode*)(long)$3, $5, $7); }
@@ -112,6 +122,9 @@ stmt
 
     | KW_WHILE LPAREN expr RPAREN stmt
         { $$ = new_while((ASTNode*)(long)$3, $5); }
+
+    | LBRACE stmt_list RBRACE
+    { $$ = $2; }
         
     | expr SEMICOLON
         { $$ = (ASTNode*)(long)$1; /* O ideal aqui eh criar um no para a expressao; usando cast para evitar warning de tipagem */ }
