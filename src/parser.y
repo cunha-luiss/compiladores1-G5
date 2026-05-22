@@ -86,7 +86,7 @@ ASTNode *root = NULL;
 %left TIMES DIVIDE
 
 /* Associa o não terminal expr ao tipo intValue */
-%type <intValue> expr
+%type <node> expr
 
 /* Não-terminais que carregam nó da AST */
 %type <node> program stmt stmt_list
@@ -127,7 +127,7 @@ stmt
     { $$ = $2; }
         
     | expr SEMICOLON
-        { $$ = (ASTNode*)(long)$1; /* O ideal aqui eh criar um no para a expressao; usando cast para evitar warning de tipagem */ }
+        { $$ = $1;  /* O ideal aqui eh criar um no para a expressao; usando cast para evitar warning de tipagem */ }
     ;
 
 expr:
@@ -138,15 +138,15 @@ expr:
       */
 
       expr PLUS expr    {
-        $$ = $1 + $3;
+        $$ = new_binop('+', $1, $3);
         printf("Expr processada: %d + %d = %d\n", $1, $3, $$);
     }
     | expr MINUS expr   {
-        $$ = $1 - $3;
+        $$ = new_binop('-', $1, $3);
         printf("Expr processada: %d - %d = %d\n", $1, $3, $$);
     }
     | expr TIMES expr   {
-        $$ = $1 * $3;
+        $$ = new_binop('*', $1, $3);
         printf("Expr processada: %d * %d = %d\n", $1, $3, $$);
     }
     | expr DIVIDE expr  {
@@ -154,7 +154,7 @@ expr:
             printf("Erro: divisao por zero em %d / %d\n", $1, $3);
             $$ = 0;
         } else {
-            $$ = $1 / $3;
+            $$ = new_binop('/', $1, $3);
             printf("Expr processada: %d / %d = %d\n", $1, $3, $$);
         }
     }
@@ -163,24 +163,24 @@ expr:
         printf("Expr processada: (%d) = %d\n", $2, $$);
     }
     | NUM               {
-        $$ = $1;
+        $$ = new_num($1);
         printf("Numero processado: %d\n", $$);
     }
     | ID                {
         printf("Identificador processado: %s (valor temporario = 0)\n", $1);
         free($1);
-        $$ = 0;
+        $$ = new_var($1);
     }
     
     /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
     | STRING_LITERAL    {
         printf("String processada: %s\n", $1);
-        $$ = 0;
+        $$ = new_string_literal($1);
         free($1);
     }
     | CHAR_LITERAL      {
         printf("Char processado: %s\n", $1);
-        $$ = $1[1];
+        $$ = new_char_literal($1);
         free($1);
     }
 
