@@ -56,6 +56,16 @@ ASTNode *new_if(ASTNode *cond, ASTNode *then, ASTNode *els) {
     return n;
 }
 
+ASTNode *new_while(ASTNode *cond, ASTNode *body) {
+    ASTNode *n = alloc_node();
+    n->type = NODE_WHILE;
+
+    n->while_node.cond = cond;
+    n->while_node.body = body;
+
+    return n;
+}
+
 ASTNode *new_assign(char *name, ASTNode *val) {
     ASTNode *n = alloc_node();
     n->type = NODE_ASSIGN;
@@ -113,6 +123,19 @@ void print_ast(ASTNode *node, int indent) {
             }
             break;
 
+        case NODE_WHILE:
+            printf("WHILE\n");
+
+            print_indent(indent + 1);
+            printf("COND:\n");
+            print_ast(node->while_node.cond, indent + 2);
+
+            print_indent(indent + 1);
+            printf("BODY:\n");
+            print_ast(node->while_node.body, indent + 2);
+
+            break;
+
         case NODE_ASSIGN:
             printf("ASSIGN(%s)\n", node->assign.name);
 
@@ -120,6 +143,7 @@ void print_ast(ASTNode *node, int indent) {
             printf("VALUE:\n");
             print_ast(node->assign.value, indent + 2);
             break;
+        
     }
 }
 
@@ -150,10 +174,16 @@ void free_ast(ASTNode *node) {
             free_ast(node->if_node.else_branch);
             break;
 
+        case NODE_WHILE:
+            free_ast(node->while_node.cond);
+            free_ast(node->while_node.body);
+            break;
+
         case NODE_ASSIGN:
             
             free_ast(node->assign.value);
             break;
+        
     }
 
     free(node);

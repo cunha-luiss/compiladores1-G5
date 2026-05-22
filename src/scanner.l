@@ -126,7 +126,7 @@ while         { return KW_WHILE; }
 "&&"    { return LOGICAL_AND; }
 "||"    { return LOGICAL_OR; }
 
-"\n"    { return NEWLINE; }
+"\n"    ;
 [ \t\r]+  { /* Não faz nada */ }
 
 .  {
