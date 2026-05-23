@@ -82,9 +82,12 @@ ASTNode *root = NULL;
 %token LESS GREATER
 
 /* Precedência */
+%left LOGICAL_OR
+%left LOGICAL_AND
+%left COMPARATION NOT_EQUAL
+%left LESS LESS_EQUAL GREATER GREATER_EQUAL
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left LESS GREATER
 
 /* Tipos dos não-terminais */
 %type <node> expr
@@ -110,7 +113,7 @@ stmt_list
 
     | stmt_list stmt
         {
-            $$ = new_block($2, $1);
+            $$ = append_block($1, $2);
         }
     ;
 
@@ -149,36 +152,66 @@ stmt
 expr
     : expr PLUS expr
         {
-            $$ = new_binop('+', $1, $3);
+            $$ = new_binop(OP_ADD, $1, $3);
             printf("Expr PLUS processada\n");
         }
 
     | expr MINUS expr
         {
-            $$ = new_binop('-', $1, $3);
+            $$ = new_binop(OP_SUB, $1, $3);
             printf("Expr MINUS processada\n");
         }
 
     | expr TIMES expr
         {
-            $$ = new_binop('*', $1, $3);
+            $$ = new_binop(OP_MUL, $1, $3);
             printf("Expr TIMES processada\n");
         }
 
     | expr DIVIDE expr
         {
-            $$ = new_binop('/', $1, $3);
+            $$ = new_binop(OP_DIV, $1, $3);
             printf("Expr DIVIDE processada\n");
         }
 
     | expr LESS expr
         {
-            $$ = new_binop('<', $1, $3);
+            $$ = new_binop(OP_LT, $1, $3);
         }
 
     | expr GREATER expr
         {
-            $$ = new_binop('>', $1, $3);
+            $$ = new_binop(OP_GT, $1, $3);
+        }
+
+    | expr LESS_EQUAL expr
+        {
+            $$ = new_binop(OP_LE, $1, $3);
+        }
+
+    | expr GREATER_EQUAL expr
+        {
+            $$ = new_binop(OP_GE, $1, $3);
+        }
+
+    | expr COMPARATION expr
+        {
+            $$ = new_binop(OP_EQ, $1, $3);
+        }
+
+    | expr NOT_EQUAL expr
+        {
+            $$ = new_binop(OP_NEQ, $1, $3);
+        }
+
+    | expr LOGICAL_AND expr
+        {
+            $$ = new_binop(OP_AND, $1, $3);
+        }
+
+    | expr LOGICAL_OR expr
+        {
+            $$ = new_binop(OP_OR, $1, $3);
         }
 
     | LPAREN expr RPAREN

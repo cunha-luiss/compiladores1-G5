@@ -20,6 +20,25 @@ static void print_indent(int indent) {
         printf("  ");
 }
 
+static const char *operator_to_string(OperatorType op) {
+    switch (op) {
+        case OP_ADD: return "+";
+        case OP_SUB: return "-";
+        case OP_MUL: return "*";
+        case OP_DIV: return "/";
+        case OP_LT: return "<";
+        case OP_GT: return ">";
+        case OP_LE: return "<=";
+        case OP_GE: return ">=";
+        case OP_EQ: return "==";
+        case OP_NEQ: return "!=";
+        case OP_AND: return "&&";
+        case OP_OR: return "||";
+    }
+
+    return "?";
+}
+
 
 // CONSTRUTORES
 
@@ -38,7 +57,7 @@ ASTNode *new_var(char *name) {
     return n;
 }
 
-ASTNode *new_binop(char op, ASTNode *l, ASTNode *r) {
+ASTNode *new_binop(OperatorType op, ASTNode *l, ASTNode *r) {
     ASTNode *n = alloc_node();
     n->type = NODE_BINOP;
     n->binop.op = op;
@@ -77,6 +96,24 @@ ASTNode *new_block(ASTNode *statement, ASTNode *next) {
     return n;
 }
 
+ASTNode *append_block(ASTNode *block, ASTNode *statement) {
+    if (!block) {
+        return new_block(statement, NULL);
+    }
+
+    ASTNode *tail = block;
+
+    while (tail->type == NODE_BLOCK && tail->block.next != NULL) {
+        tail = tail->block.next;
+    }
+
+    if (tail->type == NODE_BLOCK) {
+        tail->block.next = new_block(statement, NULL);
+    }
+
+    return block;
+}
+
 ASTNode *new_assign(char *name, ASTNode *val) {
     ASTNode *n = alloc_node();
     n->type = NODE_ASSIGN;
@@ -105,7 +142,7 @@ void print_ast(ASTNode *node, int indent) {
             break;
 
         case NODE_BINOP:
-            printf("BINOP(%c)\n", node->binop.op);
+            printf("BINOP(%s)\n", operator_to_string(node->binop.op));
 
             print_indent(indent + 1);
             printf("LEFT:\n");
