@@ -4,12 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "symtab.h"
 
 /* Declarações para evitar avisos de função implícita 
 
 Rodar com:
 
-gcc -o parser parser.tab.c lex.yy.c ast.c -lfl
+gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c -lfl
 
 */
 
@@ -140,6 +141,7 @@ stmt
 
     | ID EQUAL expr SEMICOLON
         {
+            symtab_define($1, yylineno);
             $$ = new_assign($1, $3);
         }
 
@@ -229,6 +231,7 @@ expr
     | ID
         {
             printf("Identificador processado: %s\n", $1);
+            symtab_use($1, yylineno);
             $$ = new_var($1);
         }
 
@@ -248,7 +251,7 @@ expr
 %%
 
 int main(void) {
-
+    symtab_init();
     int parse_result = yyparse();
     if (parse_result == 0) {
         printf("Análise sintática concluída com sucesso!\n\n");
@@ -263,6 +266,8 @@ int main(void) {
             printf("A árvore está vazia.\n");
         }
 
+        symtab_dump();
+
     } else {
         printf("Falha na análise sintática.\n");
     }
@@ -274,6 +279,7 @@ int main(void) {
                 syntax_errors);
     }
 
+    symtab_free();
     return parse_result;
 }
 
