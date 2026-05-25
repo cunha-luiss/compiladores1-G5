@@ -99,7 +99,7 @@ ASTNode *root = NULL;
 %%
 
 program
-    : stmt
+    : stmt_list
         {
             root = $1;
             $$ = $1;
@@ -137,6 +137,18 @@ stmt
     | LBRACE stmt_list RBRACE
         {
             $$ = $2;
+        }
+
+    | TYPE_SPECIFIER ID EQUAL expr SEMICOLON
+        {
+            symtab_define($2, yylineno);
+            $$ = new_assign($2, $4);
+        }
+
+    | TYPE_SPECIFIER ID SEMICOLON
+        {
+            symtab_define($2, yylineno);
+            $$ = new_assign($2, NULL);
         }
 
     | ID EQUAL expr SEMICOLON

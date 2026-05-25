@@ -1,5 +1,9 @@
+int contador = 10;
+
+int limite = 11;
+
 while (contador <= limite) {
-    primeiro = 1;
-    segundo = 2;
-    terceiro = 3;
+    int primeiro = 1;
+    int segundo = 2;
+    int terceiro = 3;
 }
