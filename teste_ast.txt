@@ -2,8 +2,10 @@ int contador = 10;
 
 int limite = 11;
 
+
 while (contador <= limite) {
     int primeiro = 1;
     int segundo = 2;
     int terceiro = 3;
+    contador = contador + 1;
 }
