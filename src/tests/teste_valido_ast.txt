@@ -1,7 +1,8 @@
-int contador = 10;
+int contador = 0;
 
 int limite = 11;
 
+test = 123;
 
 while (contador <= limite) {
     int primeiro = 1;
