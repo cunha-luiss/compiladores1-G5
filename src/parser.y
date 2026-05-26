@@ -141,7 +141,7 @@ stmt
 
     | TYPE_SPECIFIER ID EQUAL expr SEMICOLON
         {
-            symtab_define($2, yylineno);
+            symtab_assign($2, $4, yylineno);
             $$ = new_assign($2, $4);
         }
 
@@ -153,7 +153,14 @@ stmt
 
     | ID EQUAL expr SEMICOLON
         {
-            symtab_define($1, yylineno);
+            {
+                const Symbol *s = symtab_lookup($1);
+                if (!s || s->defined_line < 0) {
+                    fprintf(stderr, "Erro semantico na linha %d: variavel '%s' nao declarada\n", yylineno, $1);
+                } else {
+                    symtab_assign($1, $3, yylineno);
+                }
+            }
             $$ = new_assign($1, $3);
         }
 
