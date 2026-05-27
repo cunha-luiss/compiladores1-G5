@@ -2,7 +2,8 @@ int contador = 0;
 
 int limite = 11;
 
-test = 123;
+
+limite = 15;
 
 while (contador <= limite) {
     int primeiro = 1;
