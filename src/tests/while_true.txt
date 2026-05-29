@@ -1,0 +1,3 @@
+while (2 < 10) {
+    str watanabe = "vai passar";
+}

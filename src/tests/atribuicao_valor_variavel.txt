@@ -1,0 +1,6 @@
+louis;
+int louis = 2;
+louis;
+int louis = 20;
+
+//Testar atribuição de valores diferentes para a mesma variável e chamar ela mais de uma vez como verificação de contagem da tabela de símbolos

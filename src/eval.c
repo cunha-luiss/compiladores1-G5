@@ -37,6 +37,19 @@ double eval_ast(ASTNode *node) {
         case NODE_ASSIGN: {
             double result = 0.0;
             if (node->assign.value) {
+                if (node->assign.value->type == NODE_STRING || node->assign.value->type == NODE_CHAR) {
+                    symtab_set_value_str(node->assign.name, node->assign.value->str_val);
+                    printf("Execução => Atribuido string %s para a variavel %s\n", node->assign.value->str_val, node->assign.name);
+                    return 0.0;
+                } else if (node->assign.value->type == NODE_VAR) {
+                    const Symbol *sym = symtab_lookup(node->assign.value->var_name);
+                    if (sym && sym->val_type == VAL_STR) {
+                        symtab_set_value_str(node->assign.name, sym->str_val);
+                        printf("Execução => Atribuido string \"%s\" para a variavel %s\n", sym->str_val, node->assign.name);
+                        return 0.0;
+                    }
+                }
+                
                 result = eval_ast(node->assign.value);
                 symtab_set_value_num(node->assign.name, result);
                 printf("Execução => Atribuido valor %.2f para a variavel %s\n", result, node->assign.name);

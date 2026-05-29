@@ -26,5 +26,6 @@ void symtab_assign(const char *name, ASTNode *val, int line);
 void symtab_use(const char *name, int line);
 const Symbol *symtab_lookup(const char *name);
 void symtab_set_value_num(const char *name, double val);
+void symtab_set_value_str(const char *name, const char *str);
 void symtab_dump(void);
 void symtab_free(void);

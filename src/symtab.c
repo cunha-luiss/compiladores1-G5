@@ -39,6 +39,20 @@ void symtab_set_value_num(const char *name, double val) {
     }
 }
 
+void symtab_set_value_str(const char *name, const char *str) {
+    Symbol *sym = symtab_find(name);
+    if (sym) {
+        if (sym->str_val) {
+            free(sym->str_val);
+            sym->str_val = NULL;
+        }
+        sym->val_type = VAL_STR;
+        if (str) {
+            sym->str_val = strdup(str);
+        }
+    }
+}
+
 void symtab_define(const char *name, int line) {
     Symbol *sym = symtab_find(name);
 

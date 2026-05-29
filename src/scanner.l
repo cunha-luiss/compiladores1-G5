@@ -61,6 +61,7 @@ signed        { return KW_SIZE; }
 sizeof        { return OPERATOR; }
 static        { return KW_STATIC; }
 static_assert { return STATIC_ASSERT_DECLARATION; }
+str           { return TYPE_SPECIFIER; }
 struct        { return KW_DECLARATION_OF_A_COMPOUND_TYPE; }
 switch        { return SWITCH_STATEMENT; }
 thread_local  { return KW_THREAD_STORAGE_CLASS_SPECIFIER; }
