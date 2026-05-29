@@ -5,6 +5,7 @@
 #include <string.h>
 #include "ast.h"
 #include "symtab.h"
+#include "eval.h"
 
 /* Declarações para evitar avisos de função implícita 
 
@@ -278,6 +279,10 @@ int main(void) {
 
         if (root != NULL) {
             print_ast(root, 0);
+
+            printf("\nIniciando execução da árvore:\n");
+            // E aqui roda seu interpretador
+            eval_ast(root); 
 
             free_ast(root);
 

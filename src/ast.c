@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "symtab.h"
 
 // AUXILIAR
 
@@ -20,7 +21,7 @@ static void print_indent(int indent) {
         printf("  ");
 }
 
-static const char *operator_to_string(OperatorType op) {
+const char *operator_to_string(OperatorType op) {
     switch (op) {
         case OP_ADD: return "+";
         case OP_SUB: return "-";

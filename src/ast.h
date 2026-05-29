@@ -79,3 +79,4 @@ ASTNode *new_char_literal(char *ch);
 // utilidades
 void print_ast(ASTNode *node, int indent);
 void free_ast(ASTNode *node);
+const char *operator_to_string(OperatorType op);
