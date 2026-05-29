@@ -27,6 +27,18 @@ const Symbol *symtab_lookup(const char *name) {
     return symtab_find(name);
 }
 
+void symtab_set_value_num(const char *name, double val) {
+    Symbol *sym = symtab_find(name);
+    if (sym) {
+        if (sym->str_val) {
+            free(sym->str_val);
+            sym->str_val = NULL;
+        }
+        sym->val_type = VAL_NUM;
+        sym->num_val = val;
+    }
+}
+
 void symtab_define(const char *name, int line) {
     Symbol *sym = symtab_find(name);
 

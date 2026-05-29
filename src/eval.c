@@ -16,15 +16,16 @@ double eval_ast(ASTNode *node) {
 
         case NODE_VAR: {
             const Symbol *sym = symtab_lookup(node->var_name);
-            // Aqui estamos simplificando. A tabela inteira no futuro pode prover o valor
-            // Para fim ilustrativo, se achar, imprime a busca
-            if (sym) {
-                // se tivesse sym->num_val, retornaria aqui
-                return 0.0; 
-            } else {
-                printf("Variavel %s nao encontrada para avaliar.\n", node->var_name);
+            if (sym && sym->val_type == VAL_NUM) {
+                return sym->num_val;
+            } else if (sym && sym->val_type == VAL_NONE) {
+                printf("Variavel %s nao possui valor atribuido.\n", node->var_name);
+                return 0.0;
+            } else if (!sym) {
+                printf("Variavel %s nao declarada.\n", node->var_name);
                 return 0.0;
             }
+            return 0.0; 
         }
 
         case NODE_BLOCK: {
@@ -34,9 +35,12 @@ double eval_ast(ASTNode *node) {
         }
 
         case NODE_ASSIGN: {
-            double result = eval_ast(node->assign.value);
-            // symtab_update_value(node->assign.name, result); // Se você implementar no symtab
-            printf("Execução => Atribuido valor %f para a variavel %s\n", result, node->assign.name);
+            double result = 0.0;
+            if (node->assign.value) {
+                result = eval_ast(node->assign.value);
+                symtab_set_value_num(node->assign.name, result);
+                printf("Execução => Atribuido valor %.2f para a variavel %s\n", result, node->assign.name);
+            }
             return result;
         }
 
