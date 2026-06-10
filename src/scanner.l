@@ -33,7 +33,7 @@ auto          { return AUTO_TYPE_INFERENCE; }
 bool          { return BOOL_TYPE; }
 break         { return DECLARATION; }
 case          { return KW_SWITCH; }
-char          { return CHAR_LITERAL; }
+char          { return TYPE_SPECIFIER; }
 const         { return CONST_LITERAL; }
 constexpr     { return SPECIFIER; }
 continue      { return CONTINUE_STATEMENT; }
@@ -44,13 +44,13 @@ else          { return ELSE_STATEMENT; }
 enum          { return ENUMERATION_TYPE; }
 extern        { return STORAGE_CLASS_SPECIFIER; }
 false         { return FALSE_LITERAL; }
-float         { return NUMFLOAT; }
+float         { return TYPE_SPECIFIER; }
 for           { return LOOP; }
 fortran       { return TYPE_SPECIFIER; }
 goto          { return STATEMENT; }
 if            { return IF_STATEMENT; }
 inline        { return INLINE_FUNCTION_SPECIFIER; }
-int           { return NUM; }
+int           { return TYPE_SPECIFIER; }
 long          { return KW_LONG; }
 nullptr       { return POINTER_CONSTANT; }
 register      { return AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER; }
@@ -61,6 +61,7 @@ signed        { return KW_SIZE; }
 sizeof        { return OPERATOR; }
 static        { return KW_STATIC; }
 static_assert { return STATIC_ASSERT_DECLARATION; }
+str           { return TYPE_SPECIFIER; }
 struct        { return KW_DECLARATION_OF_A_COMPOUND_TYPE; }
 switch        { return SWITCH_STATEMENT; }
 thread_local  { return KW_THREAD_STORAGE_CLASS_SPECIFIER; }
@@ -125,8 +126,10 @@ while         { return KW_WHILE; }
 "!="    { return NOT_EQUAL; }
 "&&"    { return LOGICAL_AND; }
 "||"    { return LOGICAL_OR; }
+"<"     { return LESS; }
+">"     { return GREATER; }
 
-"\n"    { return NEWLINE; }
+"\n"    ;
 [ \t\r]+  { /* Não faz nada */ }
 
 .  {

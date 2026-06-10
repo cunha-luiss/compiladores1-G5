@@ -1,27 +1,31 @@
 # **Compiladores1-G5**
 
 ## O que faremos?
+
 O nosso projeto será de um interpretador de C, tanto para praticarmos mais ainda nossos conhecimentos em C, tanto para entender mais ainda sobre interpretadores que estão em todo lugar
 
-## **Pontos de Controle (P1 e P2):**  
-   - **P1:** A equipe apresenta:
-     - Definição do projeto
-     - Linguagem de programação escolhida
-  - Planejamento no método Kanban
-     - O que foi implementado
-   - **P2:** Avaliação do progresso, incluindo:
-     - Funcionalidades principais desenvolvidas
-     - Melhorias desde o P1
-     - Ajustes no planejamento
+## **Pontos de Controle (P1 e P2):**
+
+- **P1:** A equipe apresenta:
+  - Definição do projeto
+  - Linguagem de programação escolhida
+- Planejamento no método Kanban
+  - O que foi implementado
+- **P2:** Avaliação do progresso, incluindo:
+  - Funcionalidades principais desenvolvidas
+  - Melhorias desde o P1
+  - Ajustes no planejamento
 
 ## Commits
 
 Formato:
+
 ```
 <type>[optional scope]!: <short summary>
 
 [body]
 ```
+
 Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `build`, `ci`, `add`, `revert`.
 
 Ex.: `feat(api): adiciona rota de login`.
@@ -29,9 +33,11 @@ Ex.: `feat(api): adiciona rota de login`.
 ## Branches
 
 Formato:
+
 ```
 <type>/<short summary>-<author name>
 ```
+
 Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
 Ex.: `feat/AdicionaRotaDeLogin-EnzoGabriel`.
@@ -41,19 +47,36 @@ Ex.: `feat/AdicionaRotaDeLogin-EnzoGabriel`.
 Siga o workflow abaixo para contribuir:
 
 1. Crie uma branch a partir da `development`:
-    ```bash
-    git checkout dev
-    git pull
-    git checkout -b tipo/SuaFeature-SeuNome
-    ```
+
+   ```bash
+   git checkout dev
+   git pull
+   git checkout -b tipo/SuaFeature-SeuNome
+   ```
 
 2. Faça suas alterações e commits na nova branch.
 
 3. Envie sua branch para o repositório remoto:
-    ```bash
-    git push origin tipo/SuaFeature-SeuNome
-    ```
+   ```bash
+   git push origin tipo/SuaFeature-SeuNome
+   ```
 4. Abra um Pull Request (PR) da sua branch para a branch `dev` (só ir no site e colocar Base: dev <-- compare: sua-feature).
+
+## Build do interpretador
+
+Gerar parser e scanner (Bison/Flex) e compilar:
+
+```bash
+bison -d parser.y
+flex scanner.l
+gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c -lfl
+```
+
+Executar com arquivo de entrada:
+
+```bash
+./parser < teste_ast.txt
+```
 
 ## Documentação (MkDocs Material)
 

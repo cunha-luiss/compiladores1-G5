@@ -1,19 +1,24 @@
-
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "symtab.h"
+#include "eval.h"
+#include "semantic.h"
 
 /* Declarações para evitar avisos de função implícita 
 
 Rodar com:
 
-gcc -o parser parser.tab.c lex.yy.c ast.c -lfl
+gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c -lfl
 
 */
-int yylex(void);                //usado para pedir próximo token
-void yyerror(const char *s);    //usado quando há um erro
+
+int yylex(void);
+// usado para pedir próximo token
+void yyerror(const char *s);      // usado quando há um erro
+
 extern int yylineno;
 extern char *yytext;
 extern int lexical_errors;
@@ -39,13 +44,12 @@ ASTNode *root = NULL;
     ASTNode *node;
 }
 
-/* Token que carrega valor semântico */
+/* Tokens com valor semântico */
 %token <intValue> NUM
 %token <floatValue> NUMFLOAT
 %token <str> ID
 %token <str> STRING_LITERAL
 %token <str> CHAR_LITERAL
-
 
 /* Tipos e Especificadores de Tipo */
 %token KW_BOOL BOOL_TYPE DOUBLE_TYPE KW_LONG KW_SIZE TYPE_MODIFIER TYPE_SPECIFIER KW_TYPE_MODIFIER
@@ -73,131 +77,238 @@ ASTNode *root = NULL;
 %token TRUE_LITERAL FALSE_LITERAL POINTER_CONSTANT
 %token OPERATOR KW_OPERATOR KW_OPERATOR_THAT_REMOVES_QUALIFIERS
 
-
 /* Tokens sem valor semântico, mas com precedência */
 %token PLUS MINUS TIMES DIVIDE LPAREN RPAREN
 %token NEWLINE
 %token COMPARATION EQUAL
 %token SEMICOLON LBRACE RBRACE LESS_EQUAL GREATER_EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR
-/* Declara precedência:
-   - PLUS e MINUS têm menor precedência
-   - TIMES e DIVIDE têm maior precedência */
+%token LESS GREATER
+
+/* Precedência */
+%left LOGICAL_OR
+%left LOGICAL_AND
+%left COMPARATION NOT_EQUAL
+%left LESS LESS_EQUAL GREATER GREATER_EQUAL
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-/* Associa o não terminal expr ao tipo intValue */
-%type <intValue> expr
+/* Tipos dos não-terminais */
+%type <node> expr
+%type <node> program stmt stmt_list
 
-/* Não-terminais que carregam nó da AST */
-%type <node> program stmt
 %start program
-
 
 %%
 
 program
-    : stmt
+    : stmt_list
         {
             root = $1;
             $$ = $1;
         }
     ;
 
-stmt
-    : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
-        { $$ = new_if((ASTNode*)(long)$3, $5, $7); }
-    | expr SEMICOLON
-        { $$ = (ASTNode*)(long)$1; /* O ideal aqui eh criar um no para a expressao; usando cast para evitar warning de tipagem */ }
+stmt_list
+    : stmt
+        {
+            $$ = new_block($1, NULL);
+        }
+
+    | stmt_list stmt
+        {
+            $$ = append_block($1, $2);
+        }
     ;
 
-expr:
-      /*
-        $$ = resultado 
-        $1 = valor da primeira expr
-        $3 = valor da segunda expr ($2 é representado pelo +)
-      */
-
-      expr PLUS expr    {
-        $$ = $1 + $3;
-        printf("Expr processada: %d + %d = %d\n", $1, $3, $$);
-    }
-    | expr MINUS expr   {
-        $$ = $1 - $3;
-        printf("Expr processada: %d - %d = %d\n", $1, $3, $$);
-    }
-    | expr TIMES expr   {
-        $$ = $1 * $3;
-        printf("Expr processada: %d * %d = %d\n", $1, $3, $$);
-    }
-    | expr DIVIDE expr  {
-        if ($3 == 0) {
-            printf("Erro: divisao por zero em %d / %d\n", $1, $3);
-            $$ = 0;
-        } else {
-            $$ = $1 / $3;
-            printf("Expr processada: %d / %d = %d\n", $1, $3, $$);
+stmt
+    : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
+        {
+            $$ = new_if($3, $5, $7);
         }
-    }
-    | LPAREN expr RPAREN{
-        $$ = $2;
-        printf("Expr processada: (%d) = %d\n", $2, $$);
-    }
-    | NUM               {
-        $$ = $1;
-        printf("Numero processado: %d\n", $$);
-    }
-    | ID                {
-        printf("Identificador processado: %s (valor temporario = 0)\n", $1);
-        free($1);
-        $$ = 0;
-    }
-    
-    /* IMPLEMENTAÇÃO TEMPORÁRIA ANTES DA ÁRVORE SINTÁTICA*/
-    | STRING_LITERAL    {
-        printf("String processada: %s\n", $1);
-        $$ = 0;
-        free($1);
-    }
-    | CHAR_LITERAL      {
-        printf("Char processado: %s\n", $1);
-        $$ = $1[1];
-        free($1);
-    }
 
+    | IF_STATEMENT LPAREN expr RPAREN stmt
+        {
+            $$ = new_if($3, $5, NULL);
+        }
+
+    | KW_WHILE LPAREN expr RPAREN stmt
+        {
+            $$ = new_while($3, $5);
+        }
+
+    | LBRACE stmt_list RBRACE
+        {
+            $$ = $2;
+        }
+
+    | TYPE_SPECIFIER ID EQUAL expr SEMICOLON
+        {
+            /* A tabela de símbolos não é mais populada aqui */
+            $$ = new_assign($2, $4);
+        }
+
+    | TYPE_SPECIFIER ID SEMICOLON
+        {
+            $$ = new_assign($2, NULL);
+        }
+
+    | ID EQUAL expr SEMICOLON
+        {
+            /* Validações semânticas removidas do parser */
+            $$ = new_assign($1, $3);
+        }
+
+    | expr SEMICOLON
+        {
+            $$ = $1;
+        }
+    ;
+
+expr
+    : expr PLUS expr
+        {
+            $$ = new_binop(OP_ADD, $1, $3);
+            printf("Expr PLUS processada\n");
+        }
+
+    | expr MINUS expr
+        {
+            $$ = new_binop(OP_SUB, $1, $3);
+            printf("Expr MINUS processada\n");
+        }
+
+    | expr TIMES expr
+        {
+            $$ = new_binop(OP_MUL, $1, $3);
+            printf("Expr TIMES processada\n");
+        }
+
+    | expr DIVIDE expr
+        {
+            $$ = new_binop(OP_DIV, $1, $3);
+            printf("Expr DIVIDE processada\n");
+        }
+
+    | expr LESS expr
+        {
+            $$ = new_binop(OP_LT, $1, $3);
+        }
+
+    | expr GREATER expr
+        {
+            $$ = new_binop(OP_GT, $1, $3);
+        }
+
+    | expr LESS_EQUAL expr
+        {
+            $$ = new_binop(OP_LE, $1, $3);
+        }
+
+    | expr GREATER_EQUAL expr
+        {
+            $$ = new_binop(OP_GE, $1, $3);
+        }
+
+    | expr COMPARATION expr
+        {
+            $$ = new_binop(OP_EQ, $1, $3);
+        }
+
+    | expr NOT_EQUAL expr
+        {
+            $$ = new_binop(OP_NEQ, $1, $3);
+        }
+
+    | expr LOGICAL_AND expr
+        {
+            $$ = new_binop(OP_AND, $1, $3);
+        }
+
+    | expr LOGICAL_OR expr
+        {
+            $$ = new_binop(OP_OR, $1, $3);
+        }
+
+    | LPAREN expr RPAREN
+        {
+            $$ = $2;
+            printf("Expr entre parenteses processada\n");
+        }
+
+    | NUM
+        {
+            $$ = new_num($1);
+            printf("Numero processado: %d\n", $1);
+        }
+
+    | ID
+        {
+            printf("Identificador processado: %s\n", $1);
+            /* Uso da variável delegado para a análise semântica */
+            $$ = new_var($1);
+        }
+
+    | STRING_LITERAL
+        {
+            printf("String processada: %s\n", $1);
+            $$ = new_string_literal($1);
+        }
+
+    | CHAR_LITERAL
+        {
+            printf("Char processado: %s\n", $1);
+            $$ = new_char_literal($1);
+        }
     ;
 
 %%
 
 int main(void) {
-    // yyparse retorna 0 se a análise foi bem sucedida
+    symtab_init();
     int parse_result = yyparse();
     if (parse_result == 0) {
         printf("Análise sintática concluída com sucesso!\n\n");
         printf("--- Árvore Sintática Abstrata (AST) ---\n");
-        
-        // Se a raiz foi preenchida, imprime a árvore começando do nível 0 de indentação
+
         if (root != NULL) {
             print_ast(root, 0);
             
-            // Depois de usar a árvore, libere a memória para evitar memory leak
-            free_ast(root); 
+            printf("\n--- Executando Análise Semântica (1ª Passada) ---\n");
+            int semantic_errors = analyze_ast(root);
+            
+            if (semantic_errors == 0) {
+                printf("\nAnálise semântica concluída sem erros! Iniciando execução (2ª Passada):\n");
+                eval_ast(root);
+            } else {
+                fprintf(stderr, "\nExecução abortada: detectado(s) %d erro(s) semântico(s).\n", semantic_errors);
+            }
+            
+            free_ast(root);
+
         } else {
             printf("A árvore está vazia.\n");
         }
+
+        symtab_dump();
+
     } else {
         printf("Falha na análise sintática.\n");
     }
 
     if (lexical_errors > 0 || syntax_errors > 0) {
-        fprintf(stderr, "Finalizado com %d erro(s) lexico(s) e %d erro(s) sintatico(s).\n",
-                lexical_errors, syntax_errors);
+        fprintf(stderr,
+                "Finalizado com %d erro(s) lexico(s) e %d erro(s) sintatico(s).\n",
+                lexical_errors,
+                syntax_errors);
     }
 
+    symtab_free();
     return parse_result;
 }
 
 void yyerror(const char *s) {
     syntax_errors++;
-    fprintf(stderr, "Erro sintatico na linha %d: %s (proximo token: '%s')\n",
+    fprintf(stderr,
+            "Erro sintatico na linha %d: %s (proximo token: '%s')\n",
             yylineno, s, (yytext && yytext[0] != '\0') ? yytext : "EOF");
 }

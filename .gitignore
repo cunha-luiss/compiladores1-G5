@@ -1,5 +1,8 @@
 lex.yy.c
 a.out
+parser.tab.c
+parser.tab.h
+parser
 .github/
 .github/prompts
 !.github/workflows/
