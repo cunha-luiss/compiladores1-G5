@@ -1,4 +1,3 @@
-
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +5,7 @@
 #include "ast.h"
 #include "symtab.h"
 #include "eval.h"
+#include "semantic.h"
 
 /* Declarações para evitar avisos de função implícita 
 
@@ -15,8 +15,9 @@ gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c -lfl
 
 */
 
-int yylex(void);                  //usado para pedir próximo token
-void yyerror(const char *s);      //usado quando há um erro
+int yylex(void);
+// usado para pedir próximo token
+void yyerror(const char *s);      // usado quando há um erro
 
 extern int yylineno;
 extern char *yytext;
@@ -142,26 +143,18 @@ stmt
 
     | TYPE_SPECIFIER ID EQUAL expr SEMICOLON
         {
-            symtab_define($2, yylineno);
+            /* A tabela de símbolos não é mais populada aqui */
             $$ = new_assign($2, $4);
         }
 
     | TYPE_SPECIFIER ID SEMICOLON
         {
-            symtab_define($2, yylineno);
             $$ = new_assign($2, NULL);
         }
 
     | ID EQUAL expr SEMICOLON
         {
-            {
-                const Symbol *s = symtab_lookup($1);
-                if (!s || s->defined_line < 0) {
-                    fprintf(stderr, "Erro semantico na linha %d: variavel '%s' nao declarada\n", yylineno, $1);
-                } else {
-                    symtab_define($1, yylineno);
-                }
-            }
+            /* Validações semânticas removidas do parser */
             $$ = new_assign($1, $3);
         }
 
@@ -251,7 +244,7 @@ expr
     | ID
         {
             printf("Identificador processado: %s\n", $1);
-            symtab_use($1, yylineno);
+            /* Uso da variável delegado para a análise semântica */
             $$ = new_var($1);
         }
 
@@ -279,11 +272,17 @@ int main(void) {
 
         if (root != NULL) {
             print_ast(root, 0);
-
-            printf("\nIniciando execução da árvore:\n");
-            // E aqui roda seu interpretador
-            eval_ast(root); 
-
+            
+            printf("\n--- Executando Análise Semântica (1ª Passada) ---\n");
+            int semantic_errors = analyze_ast(root);
+            
+            if (semantic_errors == 0) {
+                printf("\nAnálise semântica concluída sem erros! Iniciando execução (2ª Passada):\n");
+                eval_ast(root);
+            } else {
+                fprintf(stderr, "\nExecução abortada: detectado(s) %d erro(s) semântico(s).\n", semantic_errors);
+            }
+            
             free_ast(root);
 
         } else {
@@ -311,5 +310,5 @@ void yyerror(const char *s) {
     syntax_errors++;
     fprintf(stderr,
             "Erro sintatico na linha %d: %s (proximo token: '%s')\n",
-            yylineno,s, (yytext && yytext[0] != '\0') ? yytext : "EOF");
+            yylineno, s, (yytext && yytext[0] != '\0') ? yytext : "EOF");
 }
