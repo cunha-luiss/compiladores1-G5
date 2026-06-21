@@ -68,6 +68,7 @@ thread_local  { return KW_THREAD_STORAGE_CLASS_SPECIFIER; }
 true          { return TRUE_LITERAL; }
 typedef       { return KW_TYPE_DECLARATION; }
 typeof        { return KW_OPERATOR; }
+"printf"      { return KW_PRINTF; }
 typeof_unqual { return KW_OPERATOR_THAT_REMOVES_QUALIFIERS; }
 union         { return KW_DECLARATION_OF_A_UNION_TYPE; }
 unsigned      { return KW_TYPE_MODIFIER; }

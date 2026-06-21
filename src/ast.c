@@ -215,6 +215,11 @@ void print_ast(ASTNode *node, int indent) {
             printf("VALUE:\n");
             print_ast(node->assign.value, indent + 2);
             break;
+
+        case NODE_PRINTF:
+            printf("PRINTF\n");
+            if (node->printf_node.expr) print_ast(node->printf_node.expr, indent + 1);
+            break;
         
     }
 }
@@ -268,6 +273,10 @@ void free_ast(ASTNode *node) {
             free(node->assign.name);
             free_ast(node->assign.value);
             break;
+
+        case NODE_PRINTF:
+            free_ast(node->printf_node.expr);
+            break;
         
     }
 
@@ -282,8 +291,15 @@ ASTNode *new_string_literal(char *str) {
 }
 
 ASTNode *new_char_literal(char *ch) {
-    ASTNode *n = alloc_node();
-    n->type = NODE_CHAR;
-    n->str_val = ch; // Ou criar uma variável específica na union
-    return n;
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = NODE_CHAR;
+    node->str_val = ch;
+    return node;
+}
+
+ASTNode *new_printf(ASTNode *expr) {
+    ASTNode *node = malloc(sizeof(ASTNode));
+    node->type = NODE_PRINTF;
+    node->printf_node.expr = expr;
+    return node;
 }

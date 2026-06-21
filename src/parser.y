@@ -62,7 +62,7 @@ ASTNode *root = NULL;
 /* Estruturas de Controle e Laços */
 %token IF_STATEMENT ELSE_STATEMENT KW_WHILE DO_LOOP LOOP
 %token SWITCH_STATEMENT KW_SWITCH DEFAULT_STATEMENT
-%token CONTINUE_STATEMENT DECLARATION STATEMENT RETURN_STATEMENT
+%token CONTINUE_STATEMENT DECLARATION STATEMENT RETURN_STATEMENT KW_PRINTF
 
 /* Modificadores de Acesso, Classes de Armazenamento e Qualificadores */
 %token KW_STATIC STORAGE_CLASS_SPECIFIER AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER
@@ -158,6 +158,11 @@ stmt
         {
             /* Validações semânticas removidas do parser */
             $$ = new_assign($1, $3);
+        }
+
+    | KW_PRINTF LPAREN expr RPAREN SEMICOLON
+        {
+            $$ = new_printf($3);
         }
 
     | expr SEMICOLON

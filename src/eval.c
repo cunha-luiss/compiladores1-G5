@@ -107,6 +107,25 @@ double eval_ast(ASTNode *node) {
             }
             return 0.0;
         }
+
+        case NODE_PRINTF: {
+            if (node->printf_node.expr->type == NODE_STRING || node->printf_node.expr->type == NODE_CHAR) {
+                printf("%s\n", node->printf_node.expr->str_val);
+            } else if (node->printf_node.expr->type == NODE_VAR) {
+                const Symbol *sym = symtab_lookup(node->printf_node.expr->var_name);
+                if (sym) {
+                    if (sym->val_type == VAL_NUM) {
+                        printf("%.2f\n", sym->num_val);
+                    } else if (sym->val_type == VAL_STR) {
+                        printf("%s\n", sym->str_val);
+                    }
+                }
+            } else {
+                double val = eval_ast(node->printf_node.expr);
+                printf("%.2f\n", val);
+            }
+            return 0.0;
+        }
         
         case NODE_STRING:
         case NODE_CHAR:
