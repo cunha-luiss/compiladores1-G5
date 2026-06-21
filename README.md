@@ -2,102 +2,44 @@
 
 ## O que faremos?
 
-O nosso projeto será de um interpretador de C, tanto para praticarmos mais ainda nossos conhecimentos em C, tanto para entender mais ainda sobre interpretadores que estão em todo lugar
+O nosso projeto é um mini interpretador de C com o seguinte escopo da linguagem:
 
-## **Pontos de Controle (P1 e P2):**
 
-- **P1:** A equipe apresenta:
-  - Definição do projeto
-  - Linguagem de programação escolhida
-- Planejamento no método Kanban
-  - O que foi implementado
-- **P2:** Avaliação do progresso, incluindo:
-  - Funcionalidades principais desenvolvidas
-  - Melhorias desde o P1
-  - Ajustes no planejamento
+- Tipos básicos: inteiro, ponto flutuante, booleano e char.
+- Expressões aritméticas.
+- Comparações simples (== &&).
+- Atribuição de variáveis.
+- Blocos e comandos básicos de controle de decisão (blocos if/else e while).
 
-## Commits
 
-Formato:
+Além disso, a base do nosso interpretador é a AST que é primeiro preenchida, depois percorrida e interpretada. A tabela de símbolos foi implementada com lista encadeada por ser uma estrutura de dados que o grupo mais está confortável. Também implementamos o tipo str para denotar strings e facilidar o uso de printf sem a necessidade de lidar com ponteiros e arrays.
 
-```
-<type>[optional scope]!: <short summary>
 
-[body]
-```
+### Testes:
+cd src
+./run_tests.sh
 
-Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `build`, `ci`, `add`, `revert`.
-
-Ex.: `feat(api): adiciona rota de login`.
-
-## Branches
-
-Formato:
-
-```
-<type>/<short summary>-<author name>
-```
-
-Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
-
-Ex.: `feat/AdicionaRotaDeLogin-EnzoGabriel`.
-
-## Contribuição
-
-Siga o workflow abaixo para contribuir:
-
-1. Crie uma branch a partir da `development`:
-
-   ```bash
-   git checkout dev
-   git pull
-   git checkout -b tipo/SuaFeature-SeuNome
-   ```
-
-2. Faça suas alterações e commits na nova branch.
-
-3. Envie sua branch para o repositório remoto:
-   ```bash
-   git push origin tipo/SuaFeature-SeuNome
-   ```
-4. Abra um Pull Request (PR) da sua branch para a branch `dev` (só ir no site e colocar Base: dev <-- compare: sua-feature).
 
 ## Build do interpretador
 
 Gerar parser e scanner (Bison/Flex) e compilar:
 
 ```bash
-bison -d parser.y
 flex scanner.l
-gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c -lfl
+bison -d parser.y
+gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c semantic.c eval.c -lfl
 ```
 
 Executar com arquivo de entrada:
 
 ```bash
-./parser < teste_ast.txt
+./parser < arquivo_entrada.txt
 ```
 
-## Documentação (MkDocs Material)
-
-O site de documentação usa MkDocs com tema Material.
-
-### Rodar localmente
+Rodar casos de teste
 
 ```bash
-python -m pip install -r requirements-docs.txt
-mkdocs serve
+cd src
+./run_tests.sh
 ```
 
-### Validar build
-
-```bash
-mkdocs build --strict
-```
-
-### Publicar no GitHub Pages
-
-O deploy é automático pelo workflow `.github/workflows/docs.yml`.
-No GitHub, configure `Settings -> Pages -> Source: GitHub Actions`.
-
-**Desenvolvido para Compiladores 1 FCTE-UnB 2026-1** 🎓
