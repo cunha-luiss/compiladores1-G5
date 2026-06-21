@@ -1,6 +1,6 @@
+// Execute com: ./parser < tests/while_false.txt
+// Valida a eliminacao de um while com condicao constante falsa.
+
 while (1>2) {
     int watanabe = 67;
 }
-
-
-// Mostrar que mesmo com condição falsa o código não irá atribuir valores para a variável

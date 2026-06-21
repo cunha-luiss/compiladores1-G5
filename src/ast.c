@@ -21,6 +21,37 @@ static void print_indent(int indent) {
         printf("  ");
 }
 
+static int is_numeric_constant(ASTNode *node) {
+    return node && node->type == NODE_NUM;
+}
+
+static double fold_binop(OperatorType op, double left, double right, int *can_fold) {
+    *can_fold = 1;
+
+    switch (op) {
+        case OP_ADD: return left + right;
+        case OP_SUB: return left - right;
+        case OP_MUL: return left * right;
+        case OP_DIV:
+            if (right == 0) {
+                *can_fold = 0;
+                return 0.0;
+            }
+            return left / right;
+        case OP_LT:  return left < right;
+        case OP_GT:  return left > right;
+        case OP_LE:  return left <= right;
+        case OP_GE:  return left >= right;
+        case OP_EQ:  return left == right;
+        case OP_NEQ: return left != right;
+        case OP_AND: return left != 0 && right != 0;
+        case OP_OR:  return left != 0 || right != 0;
+    }
+
+    *can_fold = 0;
+    return 0.0;
+}
+
 const char *operator_to_string(OperatorType op) {
     switch (op) {
         case OP_ADD: return "+";
@@ -217,6 +248,97 @@ void print_ast(ASTNode *node, int indent) {
             break;
         
     }
+}
+
+
+ASTNode *optimize_ast(ASTNode *node) {
+    if (!node) return NULL;
+
+    switch (node->type) {
+        case NODE_NUM:
+        case NODE_VAR:
+        case NODE_STRING:
+        case NODE_CHAR:
+            return node;
+
+        case NODE_BINOP: {
+            node->binop.left = optimize_ast(node->binop.left);
+            node->binop.right = optimize_ast(node->binop.right);
+
+            if (is_numeric_constant(node->binop.left) && is_numeric_constant(node->binop.right)) {
+                int can_fold = 0;
+                double result = fold_binop(
+                    node->binop.op,
+                    node->binop.left->num_val,
+                    node->binop.right->num_val,
+                    &can_fold
+                );
+
+                if (can_fold) {
+                    free_ast(node->binop.left);
+                    free_ast(node->binop.right);
+                    node->type = NODE_NUM;
+                    node->num_val = result;
+                }
+            }
+
+            return node;
+        }
+
+        case NODE_IF: {
+            node->if_node.cond = optimize_ast(node->if_node.cond);
+            node->if_node.then_branch = optimize_ast(node->if_node.then_branch);
+            node->if_node.else_branch = optimize_ast(node->if_node.else_branch);
+
+            if (is_numeric_constant(node->if_node.cond)) {
+                ASTNode *replacement = (node->if_node.cond->num_val != 0)
+                                           ? node->if_node.then_branch
+                                           : node->if_node.else_branch;
+                ASTNode *discarded = (replacement == node->if_node.then_branch)
+                                         ? node->if_node.else_branch
+                                         : node->if_node.then_branch;
+
+                free_ast(discarded);
+                free(node->if_node.cond);
+                free(node);
+                return replacement;
+            }
+
+            return node;
+        }
+
+        case NODE_WHILE:
+            node->while_node.cond = optimize_ast(node->while_node.cond);
+            node->while_node.body = optimize_ast(node->while_node.body);
+
+            if (is_numeric_constant(node->while_node.cond) && node->while_node.cond->num_val == 0) {
+                free_ast(node->while_node.body);
+                free(node->while_node.cond);
+                free(node);
+                return NULL;
+            }
+
+            return node;
+
+        case NODE_ASSIGN:
+            node->assign.value = optimize_ast(node->assign.value);
+            return node;
+
+        case NODE_BLOCK: {
+            node->block.statement = optimize_ast(node->block.statement);
+            node->block.next = optimize_ast(node->block.next);
+
+            if (!node->block.statement) {
+                ASTNode *next = node->block.next;
+                free(node);
+                return next;
+            }
+
+            return node;
+        }
+    }
+
+    return node;
 }
 
 

@@ -1,5 +1,6 @@
+// Execute com: ./parser < tests/if_false_statement.txt
+// Valida a eliminacao do ramo morto de um if com condicao falsa.
+
 if (2 == 3) {
     int watanabe = 10;
 }
-
-// Mostrar que com condição falsa, a variável interna não é para ser atribuída nenhum valor

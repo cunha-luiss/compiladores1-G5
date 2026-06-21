@@ -271,6 +271,9 @@ int main(void) {
         printf("--- Árvore Sintática Abstrata (AST) ---\n");
 
         if (root != NULL) {
+            root = optimize_ast(root);
+
+            printf("--- AST otimizada ---\n");
             print_ast(root, 0);
             
             printf("\n--- Executando Análise Semântica (1ª Passada) ---\n");
