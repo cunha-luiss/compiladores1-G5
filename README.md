@@ -36,6 +36,13 @@ Executar com arquivo de entrada:
 ./parser < arquivo_entrada.txt
 ```
 
+Já, se quiser rodar você mesmo indo colocando o código no terminal:
+
+```bash
+./parser
+```
+Obs.: sempre que quiser terminar uma sessão, rode Ctrl+D que cria o EOF para acabar com o processo!
+
 Rodar casos de teste
 
 ```bash
