@@ -6,6 +6,6 @@ for file in tests/*.txt; do
     echo "=========================="
     echo "Arquivo: $file"
     echo "--------------------------"
-    ./parser < "$file"
+    ./parser --test < "$file"
     echo ""
 done

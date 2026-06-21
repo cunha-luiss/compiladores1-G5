@@ -5,6 +5,8 @@
 #include "symtab.h"
 #include "eval.h"
 
+extern int debug_mode;
+
 double eval_ast(ASTNode *node) {
     if (!node) return 0.0;
 
@@ -36,7 +38,7 @@ double eval_ast(ASTNode *node) {
                 // Caso 1: Atribuição de Strings ou Chars literais
                 if (node->assign.value->type == NODE_STRING || node->assign.value->type == NODE_CHAR) {
                     symtab_set_value_str(node->assign.name, node->assign.value->str_val);
-                    printf("Execucao => Atribuido string \"%s\" para a variavel %s\n", node->assign.value->str_val, node->assign.name);
+                    if (debug_mode) printf("Execucao => Atribuido string \"%s\" para a variavel %s\n", node->assign.value->str_val, node->assign.name);
                     return 0.0;
                 } 
                 
@@ -45,7 +47,7 @@ double eval_ast(ASTNode *node) {
                     const Symbol *sym = symtab_lookup(node->assign.value->var_name);
                     if (sym && sym->val_type == VAL_STR) {
                         symtab_set_value_str(node->assign.name, sym->str_val);
-                        printf("Execucao => Atribuido string \"%s\" para a variavel %s\n", sym->str_val, node->assign.name);
+                        if (debug_mode) printf("Execucao => Atribuido string \"%s\" para a variavel %s\n", sym->str_val, node->assign.name);
                         return 0.0;
                     }
                 }
@@ -53,7 +55,7 @@ double eval_ast(ASTNode *node) {
                 // Caso 3: Atribuição numérica padrão ou resultado de expressão matemática
                 result = eval_ast(node->assign.value);
                 symtab_set_value_num(node->assign.name, result);
-                printf("Execucao => Atribuido valor %.2f para a variavel %s\n", result, node->assign.name);
+                if (debug_mode) printf("Execucao => Atribuido valor %.2f para a variavel %s\n", result, node->assign.name);
             }
             return result;
         }
@@ -85,7 +87,7 @@ double eval_ast(ASTNode *node) {
                 case OP_OR:  result = left || right; break;
             }
 
-            printf("Executado: %.2f %s %.2f => %.2f\n", left, operator_to_string(node->binop.op), right, result);
+            if (debug_mode) printf("Executado: %.2f %s %.2f => %.2f\n", left, operator_to_string(node->binop.op), right, result);
             return result;
         }
 
@@ -102,6 +104,25 @@ double eval_ast(ASTNode *node) {
         case NODE_WHILE: {
             while (eval_ast(node->while_node.cond) != 0) {
                 eval_ast(node->while_node.body);
+            }
+            return 0.0;
+        }
+
+        case NODE_PRINTF: {
+            if (node->printf_node.expr->type == NODE_STRING || node->printf_node.expr->type == NODE_CHAR) {
+                printf("%s\n", node->printf_node.expr->str_val);
+            } else if (node->printf_node.expr->type == NODE_VAR) {
+                const Symbol *sym = symtab_lookup(node->printf_node.expr->var_name);
+                if (sym) {
+                    if (sym->val_type == VAL_NUM) {
+                        printf("%.2f\n", sym->num_val);
+                    } else if (sym->val_type == VAL_STR) {
+                        printf("%s\n", sym->str_val);
+                    }
+                }
+            } else {
+                double val = eval_ast(node->printf_node.expr);
+                printf("%.2f\n", val);
             }
             return 0.0;
         }

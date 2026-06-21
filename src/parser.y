@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "ast.h"
 #include "symtab.h"
 #include "eval.h"
@@ -24,6 +25,7 @@ extern char *yytext;
 extern int lexical_errors;
 
 static int syntax_errors = 0;
+extern int debug_mode;
 
 /* Raiz da AST */
 ASTNode *root = NULL;
@@ -60,7 +62,7 @@ ASTNode *root = NULL;
 /* Estruturas de Controle e Laços */
 %token IF_STATEMENT ELSE_STATEMENT KW_WHILE DO_LOOP LOOP
 %token SWITCH_STATEMENT KW_SWITCH DEFAULT_STATEMENT
-%token CONTINUE_STATEMENT DECLARATION STATEMENT RETURN_STATEMENT
+%token CONTINUE_STATEMENT DECLARATION STATEMENT RETURN_STATEMENT KW_PRINTF
 
 /* Modificadores de Acesso, Classes de Armazenamento e Qualificadores */
 %token KW_STATIC STORAGE_CLASS_SPECIFIER AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER
@@ -158,6 +160,11 @@ stmt
             $$ = new_assign($1, $3);
         }
 
+    | KW_PRINTF LPAREN expr RPAREN SEMICOLON
+        {
+            $$ = new_printf($3);
+        }
+
     | expr SEMICOLON
         {
             $$ = $1;
@@ -167,26 +174,26 @@ stmt
 expr
     : expr PLUS expr
         {
+            if (debug_mode) printf("Expr PLUS processada\n");
             $$ = new_binop(OP_ADD, $1, $3);
-            printf("Expr PLUS processada\n");
         }
 
     | expr MINUS expr
         {
+            if (debug_mode) printf("Expr MINUS processada\n");
             $$ = new_binop(OP_SUB, $1, $3);
-            printf("Expr MINUS processada\n");
         }
 
     | expr TIMES expr
         {
+            if (debug_mode) printf("Expr TIMES processada\n");
             $$ = new_binop(OP_MUL, $1, $3);
-            printf("Expr TIMES processada\n");
         }
 
     | expr DIVIDE expr
         {
+            if (debug_mode) printf("Expr DIVIDE processada\n");
             $$ = new_binop(OP_DIV, $1, $3);
-            printf("Expr DIVIDE processada\n");
         }
 
     | expr LESS expr
@@ -231,53 +238,98 @@ expr
 
     | LPAREN expr RPAREN
         {
+            if (debug_mode) printf("Expr entre parenteses processada\n");
             $$ = $2;
-            printf("Expr entre parenteses processada\n");
         }
 
     | NUM
         {
+            if (debug_mode) printf("Numero processado: %d\n", $1);
             $$ = new_num($1);
-            printf("Numero processado: %d\n", $1);
         }
 
     | ID
         {
-            printf("Identificador processado: %s\n", $1);
+            if (debug_mode) printf("Identificador processado: %s\n", $1);
             /* Uso da variável delegado para a análise semântica */
             $$ = new_var($1);
         }
 
     | STRING_LITERAL
         {
-            printf("String processada: %s\n", $1);
+            if (debug_mode) printf("String processada: %s\n", $1);
             $$ = new_string_literal($1);
         }
 
     | CHAR_LITERAL
         {
-            printf("Char processado: %s\n", $1);
+            if (debug_mode) printf("Char processado: %s\n", $1);
             $$ = new_char_literal($1);
         }
     ;
 
 %%
 
-int main(void) {
+int debug_mode = 0;
+
+int main(int argc, char **argv) {
+    int opcao = 1;
+    int is_test = 0;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--test") == 0) {
+            is_test = 1;
+        }
+    }
+
+    if (!is_test) {
+        FILE *tty = fopen("/dev/tty", "r+");
+        if (!tty) {
+            tty = fopen("CON", "r+");
+        }
+
+        if (tty) {
+            fprintf(tty, "===========================================\n");
+            fprintf(tty, "Escolha o modo de execucao:\n");
+            fprintf(tty, "1 - Apenas executar\n");
+            fprintf(tty, "2 - Executar com passo a passo (debugging)\n");
+            fprintf(tty, "Opcao: ");
+            if (fscanf(tty, "%d", &opcao) != 1) {
+                opcao = 1;
+            }
+            fclose(tty);
+        } else {
+            printf("===========================================\n");
+            printf("Escolha o modo de execucao:\n");
+            printf("1 - Apenas executar\n");
+            printf("2 - Executar com passo a passo (debugging)\n");
+            printf("Opcao: ");
+            if (scanf("%d", &opcao) != 1) {
+                opcao = 1;
+            }
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
+        }
+    }
+
+    if (opcao == 2) {
+        debug_mode = 1;
+    }
+
     symtab_init();
     int parse_result = yyparse();
     if (parse_result == 0) {
-        printf("Análise sintática concluída com sucesso!\n\n");
-        printf("--- Árvore Sintática Abstrata (AST) ---\n");
+        if (debug_mode) printf("Análise sintática concluída com sucesso!\n\n");
+        if (debug_mode) printf("--- Árvore Sintática Abstrata (AST) ---\n");
 
         if (root != NULL) {
-            print_ast(root, 0);
+            if (debug_mode) print_ast(root, 0);
             
-            printf("\n--- Executando Análise Semântica (1ª Passada) ---\n");
+            if (debug_mode) printf("\n--- Executando Análise Semântica (1ª Passada) ---\n");
             int semantic_errors = analyze_ast(root);
             
             if (semantic_errors == 0) {
-                printf("\nAnálise semântica concluída sem erros! Iniciando execução (2ª Passada):\n");
+                if (debug_mode) printf("\nAnálise semântica concluída sem erros! Iniciando execução (2ª Passada):\n");
                 eval_ast(root);
             } else {
                 fprintf(stderr, "\nExecução abortada: detectado(s) %d erro(s) semântico(s).\n", semantic_errors);
@@ -286,13 +338,13 @@ int main(void) {
             free_ast(root);
 
         } else {
-            printf("A árvore está vazia.\n");
+            if (debug_mode) printf("A árvore está vazia.\n");
         }
 
-        symtab_dump();
+        if (debug_mode) symtab_dump();
 
     } else {
-        printf("Falha na análise sintática.\n");
+        if (debug_mode) printf("Falha na análise sintática.\n");
     }
 
     if (lexical_errors > 0 || syntax_errors > 0) {

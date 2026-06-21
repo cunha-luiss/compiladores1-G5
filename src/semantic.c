@@ -74,6 +74,10 @@ int analyze_ast(ASTNode *node) {
             errors += analyze_ast(node->block.next);
             break;
 
+        case NODE_PRINTF:
+            errors += analyze_ast(node->printf_node.expr);
+            break;
+
         default:
             fprintf(stderr, "Aviso Semantico: Tipo de no desconhecido detectado.\n");
             break;

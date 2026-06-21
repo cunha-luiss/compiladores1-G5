@@ -10,7 +10,8 @@ typedef enum {
     NODE_ASSIGN,
     NODE_STRING,
     NODE_BLOCK,
-    NODE_CHAR
+    NODE_CHAR,
+    NODE_PRINTF
 } NodeType;
 
 typedef enum {
@@ -61,6 +62,10 @@ typedef struct ASTNode {
             char *name;
             struct ASTNode *value;
         } assign;
+
+        struct {                // printf
+            struct ASTNode *expr;
+        } printf_node;
     };
 } ASTNode;
 
@@ -75,6 +80,7 @@ ASTNode *append_block(ASTNode *block, ASTNode *statement);
 ASTNode *new_assign(char *name, ASTNode *val);
 ASTNode *new_string_literal(char *str);
 ASTNode *new_char_literal(char *ch);
+ASTNode *new_printf(ASTNode *expr);
 
 // utilidades
 void print_ast(ASTNode *node, int indent);
