@@ -27,7 +27,7 @@ coverage: CFLAGS += --coverage
 coverage: LDFLAGS += --coverage
 coverage: clean $(TARGET)
 	# Executa os testes (eles rodarão o parser compilado com --coverage)
-	./run_tests.sh
+	bash ./run_tests.sh
 	
 	# Captura os dados de cobertura do diretório atual ignorando bibliotecas padrão, se possível
 	lcov --capture --directory . --output-file coverage.info
