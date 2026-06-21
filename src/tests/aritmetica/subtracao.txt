@@ -1,0 +1,3 @@
+// Subtração
+int a = 10 - 3;
+a;

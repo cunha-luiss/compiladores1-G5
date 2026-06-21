@@ -1,0 +1,5 @@
+// Atribuir valores diferentes para a mesma variável e ler várias vezes
+int louis = 2;
+louis;
+int louis = 20;
+louis;

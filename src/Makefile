@@ -23,20 +23,23 @@ $(TARGET): parser.tab.c lex.yy.c $(SRCS)
 	$(CC) $(CFLAGS) -o $(TARGET) parser.tab.c lex.yy.c $(SRCS) $(LDFLAGS)
 
 # Regra para cobertura: injeta as flags necessárias, compila, roda os testes e gera o HTML
-coverage: CFLAGS += --coverage
+coverage: CFLAGS += --coverage -O0
 coverage: LDFLAGS += --coverage
 coverage: clean $(TARGET)
-	# Executa os testes (eles rodarão o parser compilado com --coverage)
+	# Executa os testes (eles rodam o parser compilado com --coverage)
 	bash ./run_tests.sh
-	
-	# Captura os dados de cobertura do diretório atual ignorando bibliotecas padrão, se possível
+
+	# Captura os dados de cobertura do diretório atual
 	lcov --capture --directory . --output-file coverage.info
-	
-	# Opcional: remover arquivos de bibliotecas de sistema, flex e bison para limpar o relatorio
-	# lcov --remove coverage.info '/usr/*' '*/lex.yy.c' '*/parser.tab.c' '*/parser.tab.h' -o coverage.info
-	
+
+	# Remove arquivos gerados por flex/bison e cabeçalhos do relatório para deixar só o código escrito à mão
+	lcov --remove coverage.info '*/lex.yy.c' '*/parser.tab.c' '*/parser.tab.h' '*/scanner.l' '*/parser.y' -o coverage.info 2>/dev/null || true
+
 	# Gera o relatório HTML na pasta coverage_html
-	genhtml coverage.info --output-directory coverage_html
+	genhtml coverage.info --output-directory coverage_html --legend
+
+	@echo ""
+	@echo "Relatório gerado em: src/coverage_html/index.html"
 
 # Limpeza geral
 clean:

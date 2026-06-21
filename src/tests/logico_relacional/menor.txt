@@ -1,0 +1,4 @@
+// Comparação menor
+if (1 < 2) {
+    int verdade = 1;
+}
