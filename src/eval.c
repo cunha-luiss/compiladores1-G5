@@ -1,3 +1,5 @@
+Eval.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -69,14 +71,15 @@ double eval_ast(ASTNode *node) {
                 case OP_ADD: result = left + right; break;
                 case OP_SUB: result = left - right; break;
                 case OP_MUL: result = left * right; break;
-                case OP_DIV: 
-                    // Divisão por zero ainda é um erro em tempo de execução (runtime error)
+
+                case OP_DIV:
                     if (right == 0) {
                         fprintf(stderr, "Erro de execucao: divisao por zero.\n");
                         exit(1);
                     }
                     result = left / right;
                     break;
+
                 case OP_LT:  result = left < right; break;
                 case OP_GT:  result = left > right; break;
                 case OP_EQ:  result = left == right; break;
@@ -85,6 +88,11 @@ double eval_ast(ASTNode *node) {
                 case OP_GE:  result = left >= right; break;
                 case OP_AND: result = left && right; break;
                 case OP_OR:  result = left || right; break;
+
+                default:
+                    fprintf(stderr,
+                            "Erro interno: operador desconhecido.\n");
+                    return 0.0;
             }
 
             if (debug_mode) printf("Executado: %.2f %s %.2f => %.2f\n", left, operator_to_string(node->binop.op), right, result);
@@ -109,21 +117,42 @@ double eval_ast(ASTNode *node) {
         }
 
         case NODE_PRINTF: {
-            if (node->printf_node.expr->type == NODE_STRING || node->printf_node.expr->type == NODE_CHAR) {
+
+            if (!node->printf_node.expr) {
+                printf("\n");
+                return 0.0;
+            }
+
+            if (node->printf_node.expr->type == NODE_STRING ||
+                node->printf_node.expr->type == NODE_CHAR) {
+
                 printf("%s\n", node->printf_node.expr->str_val);
-            } else if (node->printf_node.expr->type == NODE_VAR) {
-                const Symbol *sym = symtab_lookup(node->printf_node.expr->var_name);
+            }
+
+            else if (node->printf_node.expr->type == NODE_VAR) {
+
+                const Symbol *sym =
+                    symtab_lookup(node->printf_node.expr->var_name);
+
                 if (sym) {
+
                     if (sym->val_type == VAL_NUM) {
                         printf("%.2f\n", sym->num_val);
-                    } else if (sym->val_type == VAL_STR) {
-                        printf("%s\n", sym->str_val);
+                    }
+
+                    else if (sym->val_type == VAL_STR) {
+                        printf("%s\n",
+                            sym->str_val ? sym->str_val : "");
                     }
                 }
-            } else {
+            }
+
+            else {
+
                 double val = eval_ast(node->printf_node.expr);
                 printf("%.2f\n", val);
             }
+
             return 0.0;
         }
         
