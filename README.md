@@ -67,15 +67,14 @@ Siga o workflow abaixo para contribuir:
 Gerar parser e scanner (Bison/Flex) e compilar:
 
 ```bash
-bison -d parser.y
-flex scanner.l
-gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c -lfl
+cd src
+make
 ```
 
 Executar com arquivo de entrada:
 
 ```bash
-./parser < teste_ast.txt
+./parser < tests/operacao_mat.txt
 ```
 
 ## Documentação (MkDocs Material)

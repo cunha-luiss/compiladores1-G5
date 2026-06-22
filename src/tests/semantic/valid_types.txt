@@ -1,0 +1,6 @@
+int inteiro = 1;
+float real = 2.5;
+double preciso = 3.5;
+char letra = 'a';
+str texto = "ola";
+bool ativo = true;

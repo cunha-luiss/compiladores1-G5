@@ -11,3 +11,4 @@ parser
 !.github/scripts/
 !.github/scripts/sync_project_to_docs.py
 site/
+*.o
