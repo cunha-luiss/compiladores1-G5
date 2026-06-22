@@ -8,7 +8,7 @@
 
 
 static ASTNode *alloc_node() {
-    ASTNode *n = malloc(sizeof(ASTNode));
+    ASTNode *n = calloc(1, sizeof(ASTNode));
     if (!n) {
         perror("malloc failed");
         exit(1);
@@ -98,19 +98,21 @@ ASTNode *new_block(ASTNode *statement, ASTNode *next) {
 }
 
 ASTNode *append_block(ASTNode *block, ASTNode *statement) {
-    if (!block) {
+
+    if (!statement)
+        return block;
+
+    if (!block)
         return new_block(statement, NULL);
-    }
 
     ASTNode *tail = block;
 
-    while (tail->type == NODE_BLOCK && tail->block.next != NULL) {
+    while (tail->type == NODE_BLOCK &&
+           tail->block.next != NULL) {
         tail = tail->block.next;
     }
 
-    if (tail->type == NODE_BLOCK) {
-        tail->block.next = new_block(statement, NULL);
-    }
+    tail->block.next = new_block(statement, NULL);
 
     return block;
 }
@@ -134,94 +136,100 @@ void print_ast(ASTNode *node, int indent) {
 
     switch (node->type) {
 
-        case NODE_NUM:
-            printf("NUM(%.2f)\n", node->num_val);
-            break;
+    case NODE_NUM:
+        printf("NUM(%.2f)\n", node->num_val);
+        break;
 
-        case NODE_VAR:
-            printf("VAR(%s)\n", node->var_name);
-            break;
+    case NODE_VAR:
+        printf("VAR(%s)\n",
+               node->var_name ? node->var_name : "<null>");
+        break;
 
-        case NODE_BINOP:
-            printf("BINOP(%s)\n", operator_to_string(node->binop.op));
+    case NODE_BINOP:
+        printf("BINOP(%s)\n", operator_to_string(node->binop.op));
 
+        print_indent(indent + 1);
+        printf("LEFT:\n");
+        print_ast(node->binop.left, indent + 2);
+
+        print_indent(indent + 1);
+        printf("RIGHT:\n");
+        print_ast(node->binop.right, indent + 2);
+        break;
+
+    case NODE_IF:
+        printf("IF\n");
+
+        print_indent(indent + 1);
+        printf("COND:\n");
+        print_ast(node->if_node.cond, indent + 2);
+
+        print_indent(indent + 1);
+        printf("THEN:\n");
+        print_ast(node->if_node.then_branch, indent + 2);
+
+        if (node->if_node.else_branch) {
             print_indent(indent + 1);
-            printf("LEFT:\n");
-            print_ast(node->binop.left, indent + 2);
+            printf("ELSE:\n");
+            print_ast(node->if_node.else_branch, indent + 2);
+        }
+        break;
 
+    case NODE_WHILE:
+        printf("WHILE\n");
+
+        print_indent(indent + 1);
+        printf("COND:\n");
+        print_ast(node->while_node.cond, indent + 2);
+
+        print_indent(indent + 1);
+        printf("BODY:\n");
+        print_ast(node->while_node.body, indent + 2);
+        break;
+
+    case NODE_BLOCK:
+        printf("BLOCK\n");
+
+        print_indent(indent + 1);
+        printf("STATEMENT:\n");
+        print_ast(node->block.statement, indent + 2);
+
+        if (node->block.next) {
             print_indent(indent + 1);
-            printf("RIGHT:\n");
-            print_ast(node->binop.right, indent + 2);
-            break;
+            printf("NEXT:\n");
+            print_ast(node->block.next, indent + 2);
+        }
+        break;
 
-        case NODE_IF:
-            printf("IF\n");
+    case NODE_STRING:
+        printf("STRING(%s)\n",
+               node->str_val ? node->str_val : "");
+        break;
 
-            print_indent(indent + 1);
-            printf("COND:\n");
-            print_ast(node->if_node.cond, indent + 2);
+    case NODE_CHAR:
+        printf("CHAR(%s)\n",
+               node->str_val ? node->str_val : "");
+        break;
 
-            print_indent(indent + 1);
-            printf("THEN:\n");
-            print_ast(node->if_node.then_branch, indent + 2);
+    case NODE_ASSIGN:
+        printf("ASSIGN(%s)\n",
+               node->assign.name ? node->assign.name : "<null>");
 
-            if (node->if_node.else_branch) {
-                print_indent(indent + 1);
-                printf("ELSE:\n");
-                print_ast(node->if_node.else_branch, indent + 2);
-            }
-            break;
+        print_indent(indent + 1);
+        printf("VALUE:\n");
+        print_ast(node->assign.value, indent + 2);
+        break;
 
-        case NODE_WHILE:
-            printf("WHILE\n");
+    case NODE_PRINTF:
+        printf("PRINTF\n");
+        if (node->printf_node.expr)
+            print_ast(node->printf_node.expr, indent + 1);
+        break;
 
-            print_indent(indent + 1);
-            printf("COND:\n");
-            print_ast(node->while_node.cond, indent + 2);
-
-            print_indent(indent + 1);
-            printf("BODY:\n");
-            print_ast(node->while_node.body, indent + 2);
-
-            break;
-
-        case NODE_BLOCK:
-            printf("BLOCK\n");
-
-            print_indent(indent + 1);
-            printf("STATEMENT:\n");
-            print_ast(node->block.statement, indent + 2);
-
-            if (node->block.next) {
-                print_indent(indent + 1);
-                printf("NEXT:\n");
-                print_ast(node->block.next, indent + 2);
-            }
-
-            break;
-
-        case NODE_STRING:
-            printf("STRING(%s)\n", node->str_val);
-            break;
-
-        case NODE_CHAR:
-            printf("CHAR(%s)\n", node->str_val);
-            break;
-
-        case NODE_ASSIGN:
-            printf("ASSIGN(%s)\n", node->assign.name);
-
-            print_indent(indent + 1);
-            printf("VALUE:\n");
-            print_ast(node->assign.value, indent + 2);
-            break;
-
-        case NODE_PRINTF:
-            printf("PRINTF\n");
-            if (node->printf_node.expr) print_ast(node->printf_node.expr, indent + 1);
-            break;
-        
-    }
+    default:
+        printf("UNKNOWN NODE\n");
+        break;
+}
 }
 
 
@@ -233,53 +241,59 @@ void free_ast(ASTNode *node) {
 
     switch (node->type) {
 
-        case NODE_NUM:
-            break;
+    case NODE_NUM:
+        break;
 
-        case NODE_VAR:
+    case NODE_VAR:
+        if (node->var_name)
             free(node->var_name);
-            break;
+        break;
 
-        case NODE_BINOP:
-            free_ast(node->binop.left);
-            free_ast(node->binop.right);
-            break;
+    case NODE_BINOP:
+        free_ast(node->binop.left);
+        free_ast(node->binop.right);
+        break;
 
-        case NODE_IF:
-            free_ast(node->if_node.cond);
-            free_ast(node->if_node.then_branch);
-            free_ast(node->if_node.else_branch);
-            break;
+    case NODE_IF:
+        free_ast(node->if_node.cond);
+        free_ast(node->if_node.then_branch);
+        free_ast(node->if_node.else_branch);
+        break;
 
-        case NODE_WHILE:
-            free_ast(node->while_node.cond);
-            free_ast(node->while_node.body);
-            break;
+    case NODE_WHILE:
+        free_ast(node->while_node.cond);
+        free_ast(node->while_node.body);
+        break;
 
-        case NODE_BLOCK:
-            free_ast(node->block.statement);
-            free_ast(node->block.next);
-            break;
+    case NODE_BLOCK:
+        free_ast(node->block.statement);
+        free_ast(node->block.next);
+        break;
 
-        case NODE_STRING:
+    case NODE_STRING:
+        if (node->str_val)
             free(node->str_val);
-            break;
+        break;
 
-        case NODE_CHAR:
+    case NODE_CHAR:
+        if (node->str_val)
             free(node->str_val);
-            break;
+        break;
 
-        case NODE_ASSIGN:
+    case NODE_ASSIGN:
+        if (node->assign.name)
             free(node->assign.name);
-            free_ast(node->assign.value);
-            break;
 
-        case NODE_PRINTF:
-            free_ast(node->printf_node.expr);
-            break;
-        
-    }
+        free_ast(node->assign.value);
+        break;
 
+    case NODE_PRINTF:
+        free_ast(node->printf_node.expr);
+        break;
+
+    default:
+        break;
+}
     free(node);
 }
 
@@ -291,15 +305,19 @@ ASTNode *new_string_literal(char *str) {
 }
 
 ASTNode *new_char_literal(char *ch) {
-    ASTNode *node = malloc(sizeof(ASTNode));
+    ASTNode *node = alloc_node();
+
     node->type = NODE_CHAR;
     node->str_val = ch;
+
     return node;
 }
 
 ASTNode *new_printf(ASTNode *expr) {
-    ASTNode *node = malloc(sizeof(ASTNode));
+    ASTNode *node = alloc_node();
+
     node->type = NODE_PRINTF;
     node->printf_node.expr = expr;
+
     return node;
 }
