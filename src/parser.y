@@ -31,7 +31,10 @@ extern int debug_mode;
 ASTNode *root = NULL;
 %}
 
-%define parse.error verbose
+%define parse.error detailed
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE_STATEMENT
 
 /* Garante que parser.tab.h conheça ASTNode antes de YYSTYPE. */
 %code requires {
@@ -93,6 +96,7 @@ ASTNode *root = NULL;
 %left LESS LESS_EQUAL GREATER GREATER_EQUAL
 %left PLUS MINUS
 %left TIMES DIVIDE
+%right UMINUS
 
 /* Tipos dos não-terminais */
 %type <node> expr
@@ -128,7 +132,7 @@ stmt
             $$ = new_if($3, $5, $7);
         }
 
-    | IF_STATEMENT LPAREN expr RPAREN stmt
+    | IF_STATEMENT LPAREN expr RPAREN stmt %prec LOWER_THAN_ELSE
         {
             $$ = new_if($3, $5, NULL);
         }
@@ -168,6 +172,26 @@ stmt
     | expr SEMICOLON
         {
             $$ = $1;
+        }
+
+    | error SEMICOLON
+        {
+            fprintf(stderr,
+                    "Erro sintatico recuperado na linha %d\n",
+                    yylineno);
+
+            yyerrok;
+            $$ = NULL;
+        }
+
+        | LBRACE error RBRACE
+        {
+            fprintf(stderr,
+                    "Erro recuperado dentro de bloco na linha %d\n",
+                    yylineno);
+
+            yyerrok;
+            $$ = NULL;
         }
     ;
 
@@ -266,6 +290,31 @@ expr
             if (debug_mode) printf("Char processado: %s\n", $1);
             $$ = new_char_literal($1);
         }
+    
+    | NUMFLOAT
+        {
+            $$ = new_num($1);
+        }
+    
+    | MINUS expr %prec UMINUS
+        {
+            $$ = new_binop(
+                    OP_SUB,
+                    new_num(0),
+                    $2
+                );
+        }
+    
+    | error
+        {
+            fprintf(stderr,
+                    "Expressao invalida na linha %d\n",
+                    yylineno);
+
+            yyerrok;
+
+            $$ = new_num(0);
+        }
     ;
 
 %%
@@ -358,9 +407,22 @@ int main(int argc, char **argv) {
     return parse_result;
 }
 
-void yyerror(const char *s) {
+void yyerror(const char *s)
+{
     syntax_errors++;
-    fprintf(stderr,
-            "Erro sintatico na linha %d: %s (proximo token: '%s')\n",
-            yylineno, s, (yytext && yytext[0] != '\0') ? yytext : "EOF");
+
+    if (yytext && yytext[0] != '\0')
+    {
+        fprintf(stderr,
+                "[Linha %d] %s. Token encontrado: '%s'\n",
+                yylineno,
+                s,
+                yytext);
+    }
+    else
+    {
+        fprintf(stderr,
+                "[Linha %d] Fim de arquivo inesperado.\n",
+                yylineno);
+    }
 }
