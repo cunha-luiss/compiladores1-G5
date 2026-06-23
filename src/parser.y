@@ -319,11 +319,11 @@ int main(int argc, char **argv) {
     symtab_init();
     int parse_result = yyparse();
     if (parse_result == 0) {
-        if (debug_mode) printf("Análise sintática concluída com sucesso!\n\n");
-        if (debug_mode) printf("--- Árvore Sintática Abstrata (AST) ---\n");
+        printf("Análise sintática concluída com sucesso!\n\n");
+        printf("--- Árvore Sintática Abstrata (AST) ---\n");
 
         if (root != NULL) {
-            if (debug_mode) print_ast(root, 0);
+            print_ast(root, 0);
             
             if (debug_mode) printf("\n--- Executando Análise Semântica (1ª Passada) ---\n");
             int semantic_errors = analyze_ast(root);
