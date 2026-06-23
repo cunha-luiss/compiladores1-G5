@@ -1,0 +1,4 @@
+// Igualdade: deve ser verdadeiro (não zero)
+if (2 == 2) {
+    int ok = 1;
+}

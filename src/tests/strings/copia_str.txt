@@ -1,0 +1,3 @@
+// Cópia de string entre variáveis (cobre NODE_ASSIGN com NODE_VAR str)
+str a = "hello";
+str b = a;

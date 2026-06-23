@@ -1,0 +1,2 @@
+// Atribuição de literal str (cobre NODE_STRING)
+str mensagem = "ola mundo";

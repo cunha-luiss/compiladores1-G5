@@ -36,6 +36,8 @@ ASTNode *root = NULL;
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE_STATEMENT
 
+%define parse.error verbose
+
 /* Garante que parser.tab.h conheça ASTNode antes de YYSTYPE. */
 %code requires {
     typedef struct ASTNode ASTNode;
@@ -132,7 +134,9 @@ stmt
             $$ = new_if($3, $5, $7);
         }
 
+
     | IF_STATEMENT LPAREN expr RPAREN stmt %prec LOWER_THAN_ELSE
+
         {
             $$ = new_if($3, $5, NULL);
         }
@@ -410,6 +414,9 @@ int main(int argc, char **argv) {
 void yyerror(const char *s)
 {
     syntax_errors++;
+    fprintf(stderr,
+        "Erro sintatico na linha %d: %s (proximo token: '%s')\n",
+        yylineno, s, (yytext && yytext[0] != '\0') ? yytext : "EOF");
 
     if (yytext && yytext[0] != '\0')
     {
@@ -425,4 +432,5 @@ void yyerror(const char *s)
                 "[Linha %d] Fim de arquivo inesperado.\n",
                 yylineno);
     }
+
 }

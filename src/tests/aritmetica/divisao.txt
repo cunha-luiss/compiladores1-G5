@@ -1,0 +1,3 @@
+// Divisão inteira aproximada
+int a = 20 / 4;
+a;

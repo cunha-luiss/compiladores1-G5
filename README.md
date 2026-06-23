@@ -15,25 +15,38 @@ O nosso projeto é um mini interpretador de C com o seguinte escopo da linguagem
 Além disso, a base do nosso interpretador é a AST que é primeiro preenchida, depois percorrida e interpretada. A tabela de símbolos foi implementada com lista encadeada por ser uma estrutura de dados que o grupo mais está confortável. Também implementamos o tipo str para denotar strings e facilidar o uso de printf sem a necessidade de lidar com ponteiros e arrays.
 
 
-### Testes:
+### Testes e Cobertura
+Para rodar os testes e gerar o relatório de cobertura de código, utilize a automação do `make` (é necessário ter o `lcov` instalado):
+
+```bash
+sudo apt-get update
+sudo apt-get install lcov
+```
+```bash
+cd src
+make coverage
+```
+O relatório HTML detalhado será gerado na pasta `src/coverage_html`.
+
+Caso queira apenas rodar os testes sem relatório:
+```bash
 cd src
 ./run_tests.sh
-
+```
 
 ## Build do interpretador
 
-Gerar parser e scanner (Bison/Flex) e compilar:
+Para gerar o parser, o scanner (Bison/Flex) e compilar o executável, basta usar o `make`:
 
 ```bash
-flex scanner.l
-bison -d parser.y
-gcc -o parser parser.tab.c lex.yy.c ast.c symtab.c semantic.c eval.c -lfl
+cd src
+make
 ```
 
 Executar com arquivo de entrada:
 
 ```bash
-./parser < arquivo_entrada.txt
+./parser < tests/controle/while_com_break.txt
 ```
 
 Já, se quiser rodar você mesmo indo colocando o código no terminal:
@@ -42,13 +55,6 @@ Já, se quiser rodar você mesmo indo colocando o código no terminal:
 ./parser
 ```
 Obs.: sempre que quiser terminar uma sessão, rode Ctrl+D que cria o EOF para acabar com o processo!
-
-Rodar casos de teste
-
-```bash
-cd src
-./run_tests.sh
-```
 
 ## Arquivos
 

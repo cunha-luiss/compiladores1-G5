@@ -133,13 +133,9 @@ while         { return KW_WHILE; }
 "\n"    ;
 [ \t\r]+  { /* Não faz nada */ }
 
-. {
+.  {
     lexical_errors++;
-
-    fprintf(stderr,
-            "[Linha %d] Erro lexico: caractere invalido '%s'\n",
-            yylineno,
-            yytext);
+    fprintf(stderr, "Erro lexico na linha %d: token invalido '%s'\n", yylineno, yytext);
 }
 
 %%

@@ -1,0 +1,4 @@
+// Comparação maior
+if (5 > 3) {
+    int verdade = 1;
+}

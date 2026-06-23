@@ -1,0 +1,4 @@
+while (1>2) {
+    int watanabe = 67;
+}
+// Com condição falsa o código não atribui valores para a variável

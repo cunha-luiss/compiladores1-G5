@@ -1,0 +1,8 @@
+// Atribuição em sequência, atualizando o valor a cada linha
+int contador = 1;
+contador = 2;
+contador = 3;
+contador = 4;
+contador;
+
+// Esperado: contador contém 4

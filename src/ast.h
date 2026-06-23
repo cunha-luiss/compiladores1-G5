@@ -85,4 +85,6 @@ ASTNode *new_printf(ASTNode *expr);
 // utilidades
 void print_ast(ASTNode *node, int indent);
 void free_ast(ASTNode *node);
+ASTNode *optimize_ast(ASTNode *node);
+
 const char *operator_to_string(OperatorType op);

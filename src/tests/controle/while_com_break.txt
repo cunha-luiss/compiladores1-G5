@@ -1,0 +1,6 @@
+// While com contador: condição depende de variável, evita loop infinito
+int i = 0;
+while (i < 3) {
+    int watanabe = "vai passar";
+    i = i + 1;
+}
