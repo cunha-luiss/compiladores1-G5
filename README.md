@@ -17,6 +17,11 @@ Além disso, a base do nosso interpretador é a AST que é primeiro preenchida, 
 
 ### Testes e Cobertura
 Para rodar os testes e gerar o relatório de cobertura de código, utilize a automação do `make` (é necessário ter o `lcov` instalado):
+
+```bash
+sudo apt-get update
+sudo apt-get install lcov
+```
 ```bash
 cd src
 make coverage
