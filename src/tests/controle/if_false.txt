@@ -1,0 +1,4 @@
+if (2 == 3) {
+    int watanabe = 10;
+}
+// Com condição falsa, a variável interna não é atribuída

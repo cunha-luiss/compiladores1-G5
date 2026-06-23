@@ -1,0 +1,5 @@
+// Igualdade falsa
+if (2 == 3) {
+    int nao_atribui = 10;
+}
+// Com condição falsa, a variável interna não deve ser atribuída

@@ -1,0 +1,4 @@
+if (2 == 2) {
+    int louis = 10;
+}
+// Testar que o interpretador verifica a condição do if antes de atribuir

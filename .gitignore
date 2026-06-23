@@ -1,10 +1,24 @@
+# Build artifacts (flex/bison)
 lex.yy.c
+parser.tab.c
+parser.tab.h
+parser
 a.out
+*.o
+
+# Coverage artifacts (gcov/lcov)
+*.gcno
+*.gcda
+coverage.info
+coverage_html/
+
+# MkDocs site
+site/
+
+# GitHub: ignorar a pasta inteira, mas manter workflows e scripts
 .github/
-.github/prompts
 !.github/workflows/
 !.github/workflows/docs.yml
 !.github/workflows/sync-kanban-docs.yml
 !.github/scripts/
 !.github/scripts/sync_project_to_docs.py
-site/

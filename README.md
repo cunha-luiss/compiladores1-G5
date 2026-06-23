@@ -1,80 +1,74 @@
 # **Compiladores1-G5**
 
 ## O que faremos?
-O nosso projeto será de um interpretador de C, tanto para praticarmos mais ainda nossos conhecimentos em C, tanto para entender mais ainda sobre interpretadores que estão em todo lugar
 
-## **Pontos de Controle (P1 e P2):**  
-   - **P1:** A equipe apresenta:
-     - Definição do projeto
-     - Linguagem de programação escolhida
-  - Planejamento no método Kanban
-     - O que foi implementado
-   - **P2:** Avaliação do progresso, incluindo:
-     - Funcionalidades principais desenvolvidas
-     - Melhorias desde o P1
-     - Ajustes no planejamento
+O nosso projeto é um mini interpretador de C com o seguinte escopo da linguagem:
 
-## Commits
 
-Formato:
-```
-<type>[optional scope]!: <short summary>
+- Tipos básicos: inteiro, ponto flutuante, booleano e char.
+- Expressões aritméticas.
+- Comparações simples (== &&).
+- Atribuição de variáveis.
+- Blocos e comandos básicos de controle de decisão (blocos if e while).
 
-[body]
-```
-Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `build`, `ci`, `add`, `revert`.
 
-Ex.: `feat(api): adiciona rota de login`.
+Além disso, a base do nosso interpretador é a AST que é primeiro preenchida, depois percorrida e interpretada. A tabela de símbolos foi implementada com lista encadeada por ser uma estrutura de dados que o grupo mais está confortável. Também implementamos o tipo str para denotar strings e facilidar o uso de printf sem a necessidade de lidar com ponteiros e arrays.
 
-## Branches
 
-Formato:
-```
-<type>/<short summary>-<author name>
-```
-Tipos comuns: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
-
-Ex.: `feat/AdicionaRotaDeLogin-EnzoGabriel`.
-
-## Contribuição
-
-Siga o workflow abaixo para contribuir:
-
-1. Crie uma branch a partir da `development`:
-    ```bash
-    git checkout dev
-    git pull
-    git checkout -b tipo/SuaFeature-SeuNome
-    ```
-
-2. Faça suas alterações e commits na nova branch.
-
-3. Envie sua branch para o repositório remoto:
-    ```bash
-    git push origin tipo/SuaFeature-SeuNome
-    ```
-4. Abra um Pull Request (PR) da sua branch para a branch `dev` (só ir no site e colocar Base: dev <-- compare: sua-feature).
-
-## Documentação (MkDocs Material)
-
-O site de documentação usa MkDocs com tema Material.
-
-### Rodar localmente
+### Testes e Cobertura
+Para rodar os testes e gerar o relatório de cobertura de código, utilize a automação do `make` (é necessário ter o `lcov` instalado):
 
 ```bash
-python -m pip install -r requirements-docs.txt
-mkdocs serve
+sudo apt-get update
+sudo apt-get install lcov
+```
+```bash
+cd src
+make coverage
+```
+O relatório HTML detalhado será gerado na pasta `src/coverage_html`.
+
+Caso queira apenas rodar os testes sem relatório:
+```bash
+cd src
+./run_tests.sh
 ```
 
-### Validar build
+## Build do interpretador
+
+Para gerar o parser, o scanner (Bison/Flex) e compilar o executável, basta usar o `make`:
 
 ```bash
-mkdocs build --strict
+cd src
+make
 ```
 
-### Publicar no GitHub Pages
+Executar com arquivo de entrada:
 
-O deploy é automático pelo workflow `.github/workflows/docs.yml`.
-No GitHub, configure `Settings -> Pages -> Source: GitHub Actions`.
+```bash
+./parser < tests/controle/while_com_break.txt
+```
 
-**Desenvolvido para Compiladores 1 FCTE-UnB 2026-1** 🎓
+Já, se quiser rodar você mesmo indo colocando o código no terminal:
+
+```bash
+./parser
+```
+Obs.: sempre que quiser terminar uma sessão, rode Ctrl+D que cria o EOF para acabar com o processo!
+
+## Arquivos
+
+### ast.c
+Responsável pelas funções relacionadas à árvore sintática abstrata, atuando na sua montagem, exibição e liberação da memória
+
+### eval.c
+
+Funções responsáveis pelo percorrimento da árvore sintática, manipulando dados, julgando operadores lógicos, controlando o fluxo em blocos if while e atualizando definições na tabela de símbolos
+
+### semantic.c
+
+Percorre a árvore sintática em busca de erros sintáticos
+
+### symtab.c
+
+Funções relacionadas a tabela de símbolos

@@ -4,7 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.tab.h"  /* contém definições geradas pelo Bison (NUM, PLUS, etc.) */
+
+int lexical_errors = 0;
+
+#define YY_USER_ACTION do { \
+    yylloc.first_line = yylineno; \
+    yylloc.last_line = yylineno; \
+} while (0);
 %}
+
+%option yylineno noinput nounput
 
 /* Definições de padrões de token e ações */
 %%
@@ -29,7 +38,7 @@ auto          { return AUTO_TYPE_INFERENCE; }
 bool          { return BOOL_TYPE; }
 break         { return DECLARATION; }
 case          { return KW_SWITCH; }
-char          { return CHAR_LITERAL; }
+char          { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 const         { return CONST_LITERAL; }
 constexpr     { return SPECIFIER; }
 continue      { return CONTINUE_STATEMENT; }
@@ -40,13 +49,13 @@ else          { return ELSE_STATEMENT; }
 enum          { return ENUMERATION_TYPE; }
 extern        { return STORAGE_CLASS_SPECIFIER; }
 false         { return FALSE_LITERAL; }
-float         { return NUMFLOAT; }
+float         { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 for           { return LOOP; }
-fortran       { return TYPE_SPECIFIER; }
+fortran       { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 goto          { return STATEMENT; }
 if            { return IF_STATEMENT; }
 inline        { return INLINE_FUNCTION_SPECIFIER; }
-int           { return NUM; }
+int           { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 long          { return KW_LONG; }
 nullptr       { return POINTER_CONSTANT; }
 register      { return AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER; }
@@ -57,12 +66,14 @@ signed        { return KW_SIZE; }
 sizeof        { return OPERATOR; }
 static        { return KW_STATIC; }
 static_assert { return STATIC_ASSERT_DECLARATION; }
+str           { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 struct        { return KW_DECLARATION_OF_A_COMPOUND_TYPE; }
 switch        { return SWITCH_STATEMENT; }
 thread_local  { return KW_THREAD_STORAGE_CLASS_SPECIFIER; }
 true          { return TRUE_LITERAL; }
 typedef       { return KW_TYPE_DECLARATION; }
 typeof        { return KW_OPERATOR; }
+"printf"      { return KW_PRINTF; }
 typeof_unqual { return KW_OPERATOR_THAT_REMOVES_QUALIFIERS; }
 union         { return KW_DECLARATION_OF_A_UNION_TYPE; }
 unsigned      { return KW_TYPE_MODIFIER; }
@@ -95,10 +106,10 @@ while         { return KW_WHILE; }
 }
 
 
-[0-9]+\.[0-9]+  { 
-    yylval.floatValue = atof(yytext); // pega texto, converte em float e salva para que o analisador sintático possa usa-lo
-    return NUMFLOAT;                   // avisa o analisador sintático que um float foi encontrado
-    }
+([0-9]+\.[0-9]*|\.[0-9]+) {
+    yylval.floatValue = atof(yytext);
+    return NUMFLOAT;
+}
 
 [0-9]+  {
     yylval.intValue = atoi(yytext); // pega texto, converte em inteiro e salva para que o analisador sintático possa usa-lo
@@ -121,10 +132,16 @@ while         { return KW_WHILE; }
 "!="    { return NOT_EQUAL; }
 "&&"    { return LOGICAL_AND; }
 "||"    { return LOGICAL_OR; }
+"<"     { return LESS; }
+">"     { return GREATER; }
 
-[ \t\n]+  { /* Não faz nada */ }
+"\n"    ;
+[ \t\r]+  { /* Não faz nada */ }
 
-.  { printf("UNKNOWN(%s)\n", yytext); }
+.  {
+    lexical_errors++;
+    fprintf(stderr, "Erro lexico na linha %d: token invalido '%s'\n", yylineno, yytext);
+}
 
 %%
 
