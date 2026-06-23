@@ -36,8 +36,6 @@ ASTNode *root = NULL;
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE_STATEMENT
 
-%define parse.error verbose
-
 /* Garante que parser.tab.h conheça ASTNode antes de YYSTYPE. */
 %code requires {
     typedef struct ASTNode ASTNode;
