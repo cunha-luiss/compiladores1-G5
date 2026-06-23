@@ -1,5 +1,0 @@
-if (2 == 2) {
-    int louis = 10;
-}
-
-// Testar se o interpretador verifica a condição do if primeiro para atribuir um valor a variável interna

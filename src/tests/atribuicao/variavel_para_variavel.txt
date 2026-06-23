@@ -1,0 +1,4 @@
+// Copiar valor de uma variável para outra
+int a = 5;
+int b = a;
+b;

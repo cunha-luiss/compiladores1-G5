@@ -1,0 +1,2 @@
+// Operações com parênteses respeitando a percursão da árvore
+int watanabe = (8+2)-20*5;

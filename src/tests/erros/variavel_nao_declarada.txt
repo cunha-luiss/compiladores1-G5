@@ -1,0 +1,2 @@
+// Deve gerar erro semântico: variável usada sem ter sido declarada
+louis;

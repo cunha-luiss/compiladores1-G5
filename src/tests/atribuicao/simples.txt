@@ -1,0 +1,6 @@
+// Atribuição numérica simples: declara, atribui e usa a variável
+int x = 10;
+x = 20;
+x;
+
+// Esperado: x contém 20
