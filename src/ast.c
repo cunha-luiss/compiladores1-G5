@@ -8,7 +8,7 @@
 
 
 static ASTNode *alloc_node() {
-    ASTNode *n = malloc(sizeof(ASTNode));
+    ASTNode *n = calloc(1, sizeof(ASTNode));
     if (!n) {
         perror("malloc failed");
         exit(1);
@@ -85,7 +85,7 @@ ASTNode *new_num(double val) {
 ASTNode *new_var(char *name) {
     ASTNode *n = alloc_node();
     n->type = NODE_VAR;
-    n->var_name = name;
+    n->var_name = name; 
     return n;
 }
 
@@ -129,19 +129,21 @@ ASTNode *new_block(ASTNode *statement, ASTNode *next) {
 }
 
 ASTNode *append_block(ASTNode *block, ASTNode *statement) {
-    if (!block) {
+
+    if (!statement)
+        return block;
+
+    if (!block)
         return new_block(statement, NULL);
-    }
 
     ASTNode *tail = block;
 
-    while (tail->type == NODE_BLOCK && tail->block.next != NULL) {
+    while (tail->type == NODE_BLOCK &&
+           tail->block.next != NULL) {
         tail = tail->block.next;
     }
 
-    if (tail->type == NODE_BLOCK) {
-        tail->block.next = new_block(statement, NULL);
-    }
+    tail->block.next = new_block(statement, NULL);
 
     return block;
 }
@@ -149,7 +151,7 @@ ASTNode *append_block(ASTNode *block, ASTNode *statement) {
 ASTNode *new_assign(char *name, ASTNode *val) {
     ASTNode *n = alloc_node();
     n->type = NODE_ASSIGN;
-    n->assign.name = name;
+    n->assign.name = name; 
     n->assign.value = val;
     return n;
 }
@@ -420,15 +422,19 @@ ASTNode *new_string_literal(char *str) {
 }
 
 ASTNode *new_char_literal(char *ch) {
-    ASTNode *node = malloc(sizeof(ASTNode));
+    ASTNode *node = alloc_node();
+
     node->type = NODE_CHAR;
     node->str_val = ch;
+
     return node;
 }
 
 ASTNode *new_printf(ASTNode *expr) {
-    ASTNode *node = malloc(sizeof(ASTNode));
+    ASTNode *node = alloc_node();
+
     node->type = NODE_PRINTF;
     node->printf_node.expr = expr;
+
     return node;
 }
