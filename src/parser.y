@@ -268,7 +268,6 @@ int main(void) {
     int parse_result = yyparse();
     if (parse_result == 0) {
         printf("Análise sintática concluída com sucesso!\n\n");
-        printf("--- Árvore Sintática Abstrata (AST) ---\n");
 
         if (root != NULL) {
             root = optimize_ast(root);

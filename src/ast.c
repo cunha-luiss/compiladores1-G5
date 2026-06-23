@@ -85,7 +85,7 @@ ASTNode *new_num(double val) {
 ASTNode *new_var(char *name) {
     ASTNode *n = alloc_node();
     n->type = NODE_VAR;
-    n->var_name = name; 
+    n->var_name = name;
     return n;
 }
 
@@ -149,7 +149,7 @@ ASTNode *append_block(ASTNode *block, ASTNode *statement) {
 ASTNode *new_assign(char *name, ASTNode *val) {
     ASTNode *n = alloc_node();
     n->type = NODE_ASSIGN;
-    n->assign.name = name; 
+    n->assign.name = name;
     n->assign.value = val;
     return n;
 }
@@ -246,7 +246,7 @@ void print_ast(ASTNode *node, int indent) {
             printf("VALUE:\n");
             print_ast(node->assign.value, indent + 2);
             break;
-        
+
     }
 }
 
@@ -299,7 +299,7 @@ ASTNode *optimize_ast(ASTNode *node) {
                                          : node->if_node.then_branch;
 
                 free_ast(discarded);
-                free(node->if_node.cond);
+                free_ast(node->if_node.cond);
                 free(node);
                 return replacement;
             }
@@ -313,7 +313,7 @@ ASTNode *optimize_ast(ASTNode *node) {
 
             if (is_numeric_constant(node->while_node.cond) && node->while_node.cond->num_val == 0) {
                 free_ast(node->while_node.body);
-                free(node->while_node.cond);
+                free_ast(node->while_node.cond);
                 free(node);
                 return NULL;
             }
@@ -390,7 +390,7 @@ void free_ast(ASTNode *node) {
             free(node->assign.name);
             free_ast(node->assign.value);
             break;
-        
+
     }
 
     free(node);

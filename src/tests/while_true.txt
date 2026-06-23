@@ -1,0 +1,8 @@
+// Execute com: ./parser < tests/while_true.txt
+// Valida a execução de um while finito com atualização da variavel de controle.
+
+int i = 0;
+
+while (i < 3) {
+    i = i + 1;
+}
