@@ -41,7 +41,7 @@ make
 Executar com arquivo de entrada:
 
 ```bash
-./parser < arquivo_entrada.txt
+./parser < tests/controle/while_com_break.txt
 ```
 
 Já, se quiser rodar você mesmo indo colocando o código no terminal:
