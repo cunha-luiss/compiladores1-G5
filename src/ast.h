@@ -31,6 +31,7 @@ typedef enum {
 
 typedef struct ASTNode {
     NodeType type;
+    int line;
     union {
         double num_val;         // número
         char  *var_name;        // variável
@@ -60,6 +61,8 @@ typedef struct ASTNode {
 
         struct {                // atribuição
             char *name;
+            char *decl_type;
+            int is_declaration;
             struct ASTNode *value;
         } assign;
 
@@ -78,9 +81,11 @@ ASTNode *new_while(ASTNode *cond, ASTNode *body);
 ASTNode *new_block(ASTNode *statement, ASTNode *next);
 ASTNode *append_block(ASTNode *block, ASTNode *statement);
 ASTNode *new_assign(char *name, ASTNode *val);
+ASTNode *new_declaration(char *type, char *name, ASTNode *val);
 ASTNode *new_string_literal(char *str);
 ASTNode *new_char_literal(char *ch);
 ASTNode *new_printf(ASTNode *expr);
+ASTNode *set_node_line(ASTNode *node, int line);
 
 // utilidades
 void print_ast(ASTNode *node, int indent);

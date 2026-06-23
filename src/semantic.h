@@ -8,4 +8,3 @@
 int analyze_ast(ASTNode *node);
 
 #endif
-#define SEMANTIC_H

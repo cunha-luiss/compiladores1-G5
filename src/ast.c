@@ -16,6 +16,13 @@ static ASTNode *alloc_node() {
     return n;
 }
 
+ASTNode *set_node_line(ASTNode *node, int line) {
+    if (node) {
+        node->line = line;
+    }
+    return node;
+}
+
 static void print_indent(int indent) {
     for (int i = 0; i < indent; i++)
         printf("  ");
@@ -121,6 +128,7 @@ ASTNode *new_block(ASTNode *statement, ASTNode *next) {
     ASTNode *n = alloc_node();
 
     n->type = NODE_BLOCK;
+    n->line = statement ? statement->line : 0;
 
     n->block.statement = statement;
     n->block.next = next;
@@ -152,7 +160,16 @@ ASTNode *new_assign(char *name, ASTNode *val) {
     ASTNode *n = alloc_node();
     n->type = NODE_ASSIGN;
     n->assign.name = name; 
+    n->assign.decl_type = NULL;
+    n->assign.is_declaration = 0;
     n->assign.value = val;
+    return n;
+}
+
+ASTNode *new_declaration(char *type, char *name, ASTNode *val) {
+    ASTNode *n = new_assign(name, val);
+    n->assign.decl_type = type;
+    n->assign.is_declaration = 1;
     return n;
 }
 
@@ -242,7 +259,13 @@ void print_ast(ASTNode *node, int indent) {
             break;
 
         case NODE_ASSIGN:
-            printf("ASSIGN(%s)\n", node->assign.name);
+            if (node->assign.is_declaration) {
+                printf("DECL(%s %s)\n",
+                       node->assign.decl_type ? node->assign.decl_type : "?",
+                       node->assign.name);
+            } else {
+                printf("ASSIGN(%s)\n", node->assign.name);
+            }
 
             print_indent(indent + 1);
             printf("VALUE:\n");
@@ -402,6 +425,7 @@ void free_ast(ASTNode *node) {
 
         case NODE_ASSIGN:
             free(node->assign.name);
+            free(node->assign.decl_type);
             free_ast(node->assign.value);
             break;
 

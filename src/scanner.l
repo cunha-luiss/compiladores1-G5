@@ -6,6 +6,11 @@
 #include "parser.tab.h"  /* contém definições geradas pelo Bison (NUM, PLUS, etc.) */
 
 int lexical_errors = 0;
+
+#define YY_USER_ACTION do { \
+    yylloc.first_line = yylineno; \
+    yylloc.last_line = yylineno; \
+} while (0);
 %}
 
 %option yylineno noinput nounput
@@ -33,7 +38,7 @@ auto          { return AUTO_TYPE_INFERENCE; }
 bool          { return BOOL_TYPE; }
 break         { return DECLARATION; }
 case          { return KW_SWITCH; }
-char          { return TYPE_SPECIFIER; }
+char          { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 const         { return CONST_LITERAL; }
 constexpr     { return SPECIFIER; }
 continue      { return CONTINUE_STATEMENT; }
@@ -44,13 +49,13 @@ else          { return ELSE_STATEMENT; }
 enum          { return ENUMERATION_TYPE; }
 extern        { return STORAGE_CLASS_SPECIFIER; }
 false         { return FALSE_LITERAL; }
-float         { return TYPE_SPECIFIER; }
+float         { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 for           { return LOOP; }
-fortran       { return TYPE_SPECIFIER; }
+fortran       { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 goto          { return STATEMENT; }
 if            { return IF_STATEMENT; }
 inline        { return INLINE_FUNCTION_SPECIFIER; }
-int           { return TYPE_SPECIFIER; }
+int           { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 long          { return KW_LONG; }
 nullptr       { return POINTER_CONSTANT; }
 register      { return AUTOMATIC_DURATION_STORAGE_CLASS_SPECIFIER; }
@@ -61,7 +66,7 @@ signed        { return KW_SIZE; }
 sizeof        { return OPERATOR; }
 static        { return KW_STATIC; }
 static_assert { return STATIC_ASSERT_DECLARATION; }
-str           { return TYPE_SPECIFIER; }
+str           { yylval.str = strdup(yytext); return TYPE_SPECIFIER; }
 struct        { return KW_DECLARATION_OF_A_COMPOUND_TYPE; }
 switch        { return SWITCH_STATEMENT; }
 thread_local  { return KW_THREAD_STORAGE_CLASS_SPECIFIER; }

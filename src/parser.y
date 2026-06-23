@@ -32,6 +32,7 @@ ASTNode *root = NULL;
 %}
 
 %define parse.error detailed
+%locations
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE_STATEMENT
@@ -53,11 +54,12 @@ ASTNode *root = NULL;
 %token <intValue> NUM
 %token <floatValue> NUMFLOAT
 %token <str> ID
+%token <str> TYPE_SPECIFIER
 %token <str> STRING_LITERAL
 %token <str> CHAR_LITERAL
 
 /* Tipos e Especificadores de Tipo */
-%token KW_BOOL BOOL_TYPE DOUBLE_TYPE KW_LONG KW_SIZE TYPE_MODIFIER TYPE_SPECIFIER KW_TYPE_MODIFIER
+%token KW_BOOL BOOL_TYPE DOUBLE_TYPE KW_LONG KW_SIZE TYPE_MODIFIER KW_TYPE_MODIFIER
 %token KW_DECIMAL32 KW_DECIMAL64 KW_DECIMAL128 KW_COMPLEX KW_IMAGINARY
 %token KW_TYPE_DECLARATION KW_DECLARATION_OF_A_COMPOUND_TYPE KW_DECLARATION_OF_A_UNION_TYPE ENUMERATION_TYPE
 %token KW_TYPE_OF_VARIABLE_OR_PARAMETER_OF_FUNCTION_OR_RETURN_VALUE
@@ -129,19 +131,19 @@ stmt_list
 stmt
     : IF_STATEMENT LPAREN expr RPAREN stmt ELSE_STATEMENT stmt
         {
-            $$ = new_if($3, $5, $7);
+            $$ = set_node_line(new_if($3, $5, $7), @1.first_line);
         }
 
 
     | IF_STATEMENT LPAREN expr RPAREN stmt %prec LOWER_THAN_ELSE
 
         {
-            $$ = new_if($3, $5, NULL);
+            $$ = set_node_line(new_if($3, $5, NULL), @1.first_line);
         }
 
     | KW_WHILE LPAREN expr RPAREN stmt
         {
-            $$ = new_while($3, $5);
+            $$ = set_node_line(new_while($3, $5), @1.first_line);
         }
 
     | LBRACE stmt_list RBRACE
@@ -152,23 +154,23 @@ stmt
     | TYPE_SPECIFIER ID EQUAL expr SEMICOLON
         {
             /* A tabela de símbolos não é mais populada aqui */
-            $$ = new_assign($2, $4);
+            $$ = set_node_line(new_declaration($1, $2, $4), @2.first_line);
         }
 
     | TYPE_SPECIFIER ID SEMICOLON
         {
-            $$ = new_assign($2, NULL);
+            $$ = set_node_line(new_declaration($1, $2, NULL), @2.first_line);
         }
 
     | ID EQUAL expr SEMICOLON
         {
             /* Validações semânticas removidas do parser */
-            $$ = new_assign($1, $3);
+            $$ = set_node_line(new_assign($1, $3), @1.first_line);
         }
 
     | KW_PRINTF LPAREN expr RPAREN SEMICOLON
         {
-            $$ = new_printf($3);
+            $$ = set_node_line(new_printf($3), @1.first_line);
         }
 
     | expr SEMICOLON
@@ -201,65 +203,65 @@ expr
     : expr PLUS expr
         {
             if (debug_mode) printf("Expr PLUS processada\n");
-            $$ = new_binop(OP_ADD, $1, $3);
+            $$ = set_node_line(new_binop(OP_ADD, $1, $3), @2.first_line);
         }
 
     | expr MINUS expr
         {
             if (debug_mode) printf("Expr MINUS processada\n");
-            $$ = new_binop(OP_SUB, $1, $3);
+            $$ = set_node_line(new_binop(OP_SUB, $1, $3), @2.first_line);
         }
 
     | expr TIMES expr
         {
             if (debug_mode) printf("Expr TIMES processada\n");
-            $$ = new_binop(OP_MUL, $1, $3);
+            $$ = set_node_line(new_binop(OP_MUL, $1, $3), @2.first_line);
         }
 
     | expr DIVIDE expr
         {
             if (debug_mode) printf("Expr DIVIDE processada\n");
-            $$ = new_binop(OP_DIV, $1, $3);
+            $$ = set_node_line(new_binop(OP_DIV, $1, $3), @2.first_line);
         }
 
     | expr LESS expr
         {
-            $$ = new_binop(OP_LT, $1, $3);
+            $$ = set_node_line(new_binop(OP_LT, $1, $3), @2.first_line);
         }
 
     | expr GREATER expr
         {
-            $$ = new_binop(OP_GT, $1, $3);
+            $$ = set_node_line(new_binop(OP_GT, $1, $3), @2.first_line);
         }
 
     | expr LESS_EQUAL expr
         {
-            $$ = new_binop(OP_LE, $1, $3);
+            $$ = set_node_line(new_binop(OP_LE, $1, $3), @2.first_line);
         }
 
     | expr GREATER_EQUAL expr
         {
-            $$ = new_binop(OP_GE, $1, $3);
+            $$ = set_node_line(new_binop(OP_GE, $1, $3), @2.first_line);
         }
 
     | expr COMPARATION expr
         {
-            $$ = new_binop(OP_EQ, $1, $3);
+            $$ = set_node_line(new_binop(OP_EQ, $1, $3), @2.first_line);
         }
 
     | expr NOT_EQUAL expr
         {
-            $$ = new_binop(OP_NEQ, $1, $3);
+            $$ = set_node_line(new_binop(OP_NEQ, $1, $3), @2.first_line);
         }
 
     | expr LOGICAL_AND expr
         {
-            $$ = new_binop(OP_AND, $1, $3);
+            $$ = set_node_line(new_binop(OP_AND, $1, $3), @2.first_line);
         }
 
     | expr LOGICAL_OR expr
         {
-            $$ = new_binop(OP_OR, $1, $3);
+            $$ = set_node_line(new_binop(OP_OR, $1, $3), @2.first_line);
         }
 
     | LPAREN expr RPAREN
@@ -271,40 +273,40 @@ expr
     | NUM
         {
             if (debug_mode) printf("Numero processado: %d\n", $1);
-            $$ = new_num($1);
+            $$ = set_node_line(new_num($1), @1.first_line);
         }
 
     | ID
         {
             if (debug_mode) printf("Identificador processado: %s\n", $1);
             /* Uso da variável delegado para a análise semântica */
-            $$ = new_var($1);
+            $$ = set_node_line(new_var($1), @1.first_line);
         }
 
     | STRING_LITERAL
         {
             if (debug_mode) printf("String processada: %s\n", $1);
-            $$ = new_string_literal($1);
+            $$ = set_node_line(new_string_literal($1), @1.first_line);
         }
 
     | CHAR_LITERAL
         {
             if (debug_mode) printf("Char processado: %s\n", $1);
-            $$ = new_char_literal($1);
+            $$ = set_node_line(new_char_literal($1), @1.first_line);
         }
     
     | NUMFLOAT
         {
-            $$ = new_num($1);
+            $$ = set_node_line(new_num($1), @1.first_line);
         }
     
     | MINUS expr %prec UMINUS
         {
-            $$ = new_binop(
+            $$ = set_node_line(new_binop(
                     OP_SUB,
-                    new_num(0),
+                    set_node_line(new_num(0), @1.first_line),
                     $2
-                );
+                ), @1.first_line);
         }
     
     | error
@@ -315,7 +317,7 @@ expr
 
             yyerrok;
 
-            $$ = new_num(0);
+            $$ = set_node_line(new_num(0), yylineno);
         }
     ;
 

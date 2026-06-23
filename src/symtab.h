@@ -3,8 +3,12 @@
 
 typedef struct ASTNode ASTNode;
 
+#define SYMTAB_GLOBAL_SCOPE 0
+
 typedef struct Symbol {
     char *name;
+    char *type;
+    int scope;
     int defined_line;
     int last_used_line;
     int use_count;
@@ -21,6 +25,10 @@ typedef struct Symbol {
 } Symbol;
 
 void symtab_init(void);
+int symtab_insert(const char *name, const char *type, int scope, int line);
+const Symbol *symtab_lookup_in_scope(const char *name, int scope);
+const Symbol *symtab_lookup_visible(const char *name, int scope);
+void symtab_remove_scope(int scope);
 void symtab_define(const char *name, int line);
 void symtab_assign(const char *name, ASTNode *val, int line);
 void symtab_use(const char *name, int line);
